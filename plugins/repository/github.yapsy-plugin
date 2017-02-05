@@ -1,0 +1,6 @@
+[Core]
+Name = GitHubHelper
+Module = github
+
+[Documentation]
+Description = Implements RepositoryHelper methods using the GitHub3 API

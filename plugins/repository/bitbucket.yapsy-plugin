@@ -1,0 +1,6 @@
+[Core]
+Name = BitBucketHelper
+Module = bitbucket
+
+[Documentation]
+Description = Implements RepositoryHelper methods using for BitBucket

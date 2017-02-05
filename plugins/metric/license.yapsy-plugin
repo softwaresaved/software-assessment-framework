@@ -1,0 +1,6 @@
+[Core]
+Name = LicenseMetric
+Module = license
+
+[Documentation]
+Description = Find identify the software license
