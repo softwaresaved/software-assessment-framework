@@ -1,7 +1,6 @@
 import logging
 from plugins.metric.metric import Metric
 
-# TODO - Perhaps pass in the RepositoryHelper  and pull in the file directly
 
 class LicenseMetric(Metric):
     """

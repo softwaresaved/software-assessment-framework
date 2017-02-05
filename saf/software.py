@@ -1,6 +1,9 @@
 import logging
 
 class Software:
+    """
+    First pass at an entity class for an item of software submitted for assessment
+    """
     # TODO - Instantiate from JSON string
     def __init__(self, software_id, name, description, version, submitter, submitted, url, upload_path):
         logging.debug("Creating new instance of Software: "+name)
