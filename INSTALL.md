@@ -8,14 +8,19 @@ Use of a Python Virtual Environment [venv](https://docs.python.org/3/library/ven
 
 ### Ubuntu Linux
 * Setup and activate the Virtual Environment
+
 `$ virtualenv -p python3 venv`
+
 `$ source venv/bin/activate`	
 
 * Clone the SAF GitHub repository:
+
 `$ git clone https://github.com/softwaresaved/software-assessment-framework.git`
 
 * Install the prerequisite Python packages as described in requirement.txt:
+
 `$ cd software-assessment-framework`
+
 `$ pip install -r requirements.txt`
 
 ### MacOS
@@ -25,11 +30,11 @@ TBC
 TBC
 
 ## Configuration
-Some operations employ the GitHub API, and require a GitHub [Personal Access Token](https://github.com/settings/tokens) to be generated and inserted into 
-`config.py`
+Some operations employ the GitHub API, and require a GitHub [Personal Access Token](https://github.com/settings/tokens) to be generated and inserted into `config.py`
 
 ## Running
 run.py contains a simple, contrived example to get you started:
+
 `python run.py`
 
 You should see output to STDERR ending something like:
