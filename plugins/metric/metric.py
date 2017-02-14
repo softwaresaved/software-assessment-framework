@@ -10,6 +10,13 @@ class Metric(yapsy.IPlugin.IPlugin):
     The presence of an identifiable license results in a score of 100.
     """
 
+    def __init__(self, category=None, short_description=None, long_description=None, feedback=None, score=None):
+        self.category = category # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
+        self.short_description = short_description
+        self.long_description = long_description
+        self.feedback = feedback
+        self.score = score
+
     def run(self, software, helper):
         """
         The main method to run the metric.
