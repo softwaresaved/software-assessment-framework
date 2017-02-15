@@ -3,11 +3,10 @@ import logging
 from github3 import GitHub
 
 import config
-from plugins.metric.license import LicenseMetric
-from plugins.repository.helper import RepositoryHelper
+import plugins.repository.helper as helper
 
 
-class GitHubHelper(RepositoryHelper):
+class GitHubHelper(helper.RepositoryHelper):
 
     def can_process(self, url):
         if "github.com" in url:

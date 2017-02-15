@@ -1,8 +1,8 @@
 import logging
-from plugins.metric.metric import Metric
+import plugins.metric.metric as metric
 
 
-class LicenseMetric(Metric):
+class LicenseMetric(metric.Metric):
     """
     Find and attempt to identify a software license file
     """
@@ -62,7 +62,7 @@ class LicenseMetric(Metric):
         """ (Optional) A longer descriptions of the metric
         :return:
          description of the metric"""
-        return ("Has a license file?")
+        return ("Test for the existence of file 'LICENSE' and attempt to identify it from it's content.")
 
     def get_feedback(self):
         """

@@ -1,10 +1,10 @@
 import logging
 
 from plugins.metric.license import LicenseMetric
-from plugins.repository.helper import RepositoryHelper
+import plugins.repository.helper as helper
 
 
-class BitBucketHelper(RepositoryHelper):
+class BitBucketHelper(helper.RepositoryHelper):
     def can_process(self, url):
         if "bitbucket.com" in url:
             self.repo_url = url

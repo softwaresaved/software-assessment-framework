@@ -1,5 +1,6 @@
 import yapsy.IPlugin
 import logging
+import plugins.repository
 
 
 class RepositoryHelper(yapsy.IPlugin.IPlugin):
