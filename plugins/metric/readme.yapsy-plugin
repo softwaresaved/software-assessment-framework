@@ -1,0 +1,6 @@
+[Core]
+Name = ReadmeMetric
+Module = readme
+
+[Documentation]
+Description = Find a README file
