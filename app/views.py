@@ -1,8 +1,14 @@
-from datetime import datetime
-from flask import render_template, redirect, url_for
-from app.main.forms import SoftwareSubmitForm
+from flask import render_template, redirect, url_for, session
+from app.main.forms import SoftwareSubmitForm, MultiCheckboxField
+from flask_wtf import FlaskForm
 from app.models import db, Software
 from app import app
+import hashlib
+from wtforms import BooleanField, SubmitField, SelectMultipleField
+
+import logging
+import plugins.metric
+
 
 # Routes and views
 
@@ -17,12 +23,12 @@ def index():
                       description=softwareSubmitForm.description.data,
                       version=softwareSubmitForm.version.data,
                       submitter='User',
-                      submitted=datetime.utcnow(),
                       url=softwareSubmitForm.url.data)
-
         # Persist it
         db.session.add(sw)
         db.session.commit()
+        # Add to session
+        session['sw_id'] = sw.id
         # Forward to metrics selection
         return redirect(url_for('metrics_selection'))
 
@@ -31,6 +37,29 @@ def index():
 
 @app.route('/metrics_selection')
 def metrics_selection():
-    # ToDo Load metrics and add descriptions
 
-    return(render_template('metrics_selection.html'))
+    # Find / Iterate through metrics
+    logging.info("Finding metrics")
+    metrics = plugins.metric.load()
+
+    # for metric in metrics:
+    #     logging.info("Running metric: " + metric.get_short_description())
+    #     metric.run(sw, repos_helper)
+    #     logging.info(metric.get_score())
+    #     logging.info(metric.get_feedback())
+
+    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate
+
+    class MetricRunform(FlaskForm):
+        pass
+
+    metrics_choices = []
+    for metric in metrics:
+        metric_key = hashlib.md5(metric.get_short_description().encode('utf-8')).hexdigest()
+        metrics_choices.append((metric_key, metric.get_short_description()))
+
+    setattr(MetricRunform, 'metrics_select', MultiCheckboxField('Select Metrics to run', choices = metrics_choices))
+    setattr(MetricRunform, 'submit', SubmitField('Run Metrics'))
+
+    metricRunForm = MetricRunform()
+    return render_template('metrics_selection.html', form=metricRunForm)
