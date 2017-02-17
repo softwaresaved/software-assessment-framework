@@ -1,6 +1,7 @@
 import logging
 from . import app
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 import os
 
 
@@ -21,18 +22,8 @@ class Software(db.Model):
     description = db.Column(db.Text)
     version = db.Column(db.Text)
     submitter = db.Column(db.Text)
-    submitted = db.Column(db.DateTime)
+    submitted = db.Column(db.DateTime, default=datetime.datetime.now())
     url = db.Column(db.Text)
-
-    def __init__(self, id, name, description, version, submitter, submitted, url):
-        logging.debug("Creating new instance of Software: "+name)
-        self.id = id
-        self.name = name
-        self.description = description
-        self.version = version
-        self.submitter = submitter
-        self.submitted = submitted
-        self.url = url
 
 if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI'] ):
     logging.info("Creating tables in data.sqlite")
