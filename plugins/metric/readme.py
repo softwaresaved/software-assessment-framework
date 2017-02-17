@@ -6,7 +6,7 @@ class ReadmeMetric(metric.Metric):
     """
     Find and attempt to identify a README file
     """
-
+    category = 'USABILITY'
     def run(self, software, helper):
         """"
         Attempt to locate a REAME file licence

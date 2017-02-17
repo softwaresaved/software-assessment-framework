@@ -9,13 +9,7 @@ class Metric(yapsy.IPlugin.IPlugin):
     If a LICENSE file is present, but not identifiable as known license, a score of 50
     The presence of an identifiable license results in a score of 100.
     """
-
-    def __init__(self, category=None, short_description=None, long_description=None, feedback=None, score=None):
-        self.category = category # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
-        self.short_description = short_description
-        self.long_description = long_description
-        self.feedback = feedback
-        self.score = score
+    category = None # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
 
     def run(self, software, helper):
         """

@@ -7,6 +7,8 @@ class LicenseMetric(metric.Metric):
     Find and attempt to identify a software license file
     """
 
+    category = 'USABILITY'
+
     def run(self, software, helper):
         """"
         Attempt to identify licence
