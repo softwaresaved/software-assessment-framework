@@ -4,7 +4,18 @@
     <div class="page-header">
         <h2>Choose Your Metrics</h2>
     </div>
+    <div>{{ form.metrics_availability.label }}</div>
+    <div>{{ form.metrics_availability }}</div>
 
-    {{ wtf.quick_form(form) }}
+    <div>{{ form.metrics_usability.label }}</div>
+    <div>{{ form.metrics_usability }}</div>
+
+    <div>{{ form.metrics_maintainability.label }}</div>
+    <div>{{ form.metrics_maintainability }}</div>
+
+    <div>{{ form.metrics_portability.label }}</div>
+    <div>{{ form.metrics_portability }}</div>
+
+    <div>{{ form.submit() }}</div>
 
 {% endblock %}

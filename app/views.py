@@ -37,29 +37,50 @@ def index():
 
 @app.route('/metrics_selection')
 def metrics_selection():
-
+    # ToDo Better classify metrics plugins and load 4 sets
     # Find / Iterate through metrics
     logging.info("Finding metrics")
     metrics = plugins.metric.load()
 
-    # for metric in metrics:
-    #     logging.info("Running metric: " + metric.get_short_description())
-    #     metric.run(sw, repos_helper)
-    #     logging.info(metric.get_score())
-    #     logging.info(metric.get_feedback())
-
     # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate
 
-    class MetricRunform(FlaskForm):
+    class MetricRunForm(FlaskForm):
         pass
+    metrics_availability = []
+    metrics_usability = []
+    metrics_maintainability = []
+    metrics_portability = []
 
-    metrics_choices = []
     for metric in metrics:
         metric_key = hashlib.md5(metric.get_short_description().encode('utf-8')).hexdigest()
-        metrics_choices.append((metric_key, metric.get_short_description()))
+        if metric.category == 'AVAILABILITY':
+            metrics_availability.append((metric_key, metric.get_short_description()))
+        elif metric.category == 'USABILITY':
+            metrics_usability.append((metric_key, metric.get_short_description()))
+        elif metric.category == 'MAINTAINABILITY':
+            metrics_maintainability.append((metric_key, metric.get_short_description()))
+        elif metric.category == 'PORTABILITY':
+            metrics_portability.append((metric_key, metric.get_short_description()))
 
-    setattr(MetricRunform, 'metrics_select', MultiCheckboxField('Select Metrics to run', choices = metrics_choices))
-    setattr(MetricRunform, 'submit', SubmitField('Run Metrics'))
+    setattr(MetricRunForm, 'metrics_availability', MultiCheckboxField('Availability', choices=metrics_availability))
+    setattr(MetricRunForm, 'metrics_usability', MultiCheckboxField('Usability', choices=metrics_usability))
+    setattr(MetricRunForm, 'metrics_maintainability', MultiCheckboxField('Maintainability', choices=metrics_maintainability))
+    setattr(MetricRunForm, 'metrics_portability', MultiCheckboxField('Portability', choices=metrics_portability))
+    setattr(MetricRunForm, 'submit', SubmitField('Run Metrics'))
+    metricRunForm = MetricRunForm()
 
-    metricRunForm = MetricRunform()
+    if metricRunForm.validate_on_submit():
+
+        # Run metrics
+        # for metric in metrics:
+        #     logging.info("Running metric: " + metric.get_short_description())
+        #     metric.run(sw, repos_helper)
+        #     logging.info(metric.get_score())
+        #     logging.info(metric.get_feedback())
+        # Forward to metrics selection
+
+        #iterate through metrics and run
+
+        return redirect(url_for('metrics_results'))
+
     return render_template('metrics_selection.html', form=metricRunForm)
