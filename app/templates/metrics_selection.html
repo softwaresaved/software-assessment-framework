@@ -4,6 +4,8 @@
     <div class="page-header">
         <h2>Choose Your Metrics</h2>
     </div>
+    <form action="{{ url_for('metrics_selection') }}" method="POST">
+    {{ form.csrf_token }}
     <div>{{ form.metrics_availability.label }}</div>
     <div>{{ form.metrics_availability }}</div>
 
@@ -17,5 +19,6 @@
     <div>{{ form.metrics_portability }}</div>
 
     <div>{{ form.submit() }}</div>
+    </form>
 
 {% endblock %}

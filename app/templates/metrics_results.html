@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h2>Metrics Results</h2>
+    </div>
+    <h2>Availability</h2>
+    <ul>
+        {% for score in availability_scores %}
+            <li>
+                <div>
+                    <h3>{{ score.short_description }}</h3>
+                    <div>Score: {{ score.value }}</div>
+                    <div>Feedback: {{ score.feedback }}</div>
+                </div>
+            </li>
+        {%  endfor %}
+    </ul>
+    <h2>Usability</h2>
+    <ul>
+        {% for score in usability_scores %}
+            <li>
+                <div>
+                    <h3>{{ score.short_description }}</h3>
+                    <div>Score: {{ score.value }}</div>
+                    <div>Feedback: {{ score.feedback }}</div>
+                </div>
+            </li>
+        {%  endfor %}
+    </ul>
+    <h2>Maintainability</h2>
+    <ul>
+        {% for score in maintainability_scores %}
+            <li>
+                <div>
+                    <h3>{{ score.short_description }}</h3>
+                    <div>Score: {{ score.value }}</div>
+                    <div>Feedback: {{ score.feedback }}</div>
+                </div>
+            </li>
+        {%  endfor %}
+    </ul>
+    <h2>Portability</h2>
+    <ul>
+        {% for score in portability_scores %}
+            <li>
+                <div>
+                    <h3>{{ score.short_description }}</h3>
+                    <div>Score: {{ score.value }}</div>
+                    <div>Feedback: {{ score.feedback }}</div>
+                </div>
+            </li>
+        {%  endfor %}
+    </ul>
+
+{% endblock %}
