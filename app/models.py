@@ -12,6 +12,7 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 db = SQLAlchemy(app)
 
+
 class Software(db.Model):
     """
     Entity class for an item of software submitted for assessment
@@ -24,7 +25,30 @@ class Software(db.Model):
     submitter = db.Column(db.Text)
     submitted = db.Column(db.DateTime, default=datetime.datetime.now())
     url = db.Column(db.Text)
+    scores = db.relationship('Score', backref='software', lazy='dynamic')
 
-if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI'] ):
-    logging.info("Creating tables in data.sqlite")
+
+class Score(db.Model):
+    """
+    Entity class for the result of running a metric against an item of software
+    """
+    __tablename__ = 'score'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    software_id = db.Column(db.Integer, db.ForeignKey('software.id'))
+    short_description = db.Column(db.Text)
+    long_description = db.Column(db.Text)
+    value = db.Column(db.Integer)
+    feedback = db.Column(db.Text)
+
+    def __init__(self, software_id, short_description, long_description, value, feedback):
+        self.software_id = software_id
+        self.short_description = short_description
+        self.long_description = long_description
+        self.value = value
+        self.feedback = feedback
+
+
+# Create database if required
+if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI']):
+    app.logger.info("Creating tables in data.sqlite")
     db.create_all()
