@@ -44,12 +44,10 @@ If you use conda to manage virtual environments, replace step 1 as follows:
 Some operations employ the GitHub API, and require a GitHub [Personal Access Token](https://github.com/settings/tokens) to be generated and inserted into `config.py`
 
 ## Running
-run.py contains a simple, contrived example to get you started:
+run.py starts the web app, which will be accessible on http://localhost:5000
 
 `python run.py`
 
-You should see output to STDERR ending something like:
 
-`Well done! This code is licensed under the Apache 2.0 license.`
 
 
