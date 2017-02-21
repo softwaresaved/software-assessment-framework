@@ -9,6 +9,7 @@ class Metric(yapsy.IPlugin.IPlugin):
     If a LICENSE file is present, but not identifiable as known license, a score of 50
     The presence of an identifiable license results in a score of 100.
     """
+
     category = None # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
 
     def run(self, software, helper):
@@ -30,7 +31,6 @@ class Metric(yapsy.IPlugin.IPlugin):
     def get_short_description(self):
         """A one or two sentence description of the metric"""
         raise NotImplementedError("This method must be overridden")
-
 
     def get_long_description(self):
         """ (Optional) A longer descriptions of the metric
