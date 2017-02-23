@@ -4,7 +4,11 @@ import plugins.metric.metric as metric
 
 class ReadmeMetric(metric.Metric):
     """
-    Find and attempt to identify a README file
+    Locate a README file
+    Looks in the root of the repository, for files named: 'README', 'README.txt', 'README.md', 'README.html'
+    Scores:
+    0 if no README found
+    100 if README file with non-zero length contents is found
     """
 
     CATEGORY = "USABILITY"

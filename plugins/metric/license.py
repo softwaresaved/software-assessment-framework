@@ -5,7 +5,7 @@ import plugins.metric.metric as metric
 class LicenseMetric(metric.Metric):
     """
     Locate and attempt to identify a software license file
-    Looks in the root of the repository, for files named LICENSE or COPYING
+    Looks in the root of the repository, for files named: 'LICENSE', 'LICENSE.txt', 'LICENSE.md', 'LICENSE.html','LICENCE', 'LICENCE.txt', 'LICENCE.md', 'LICENCE.html'
     Identifies LGPL, GPL, MIT, BSD, Apache 1.0/1.1/2.0
     Scores:
     0 if no license found
