@@ -10,7 +10,9 @@ class Metric(yapsy.IPlugin.IPlugin):
     The presence of an identifiable license results in a score of 100.
     """
 
-    category = None # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
+    CATEGORY = "UNSET"  # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
+    SHORT_DESCRIPTION = "UNSET"  # A one or two sentence description of the metric"
+    LONG_DESCRIPTION = "UNSET"  # A few sentences describing the outcome, and providing tips if the outcome was not as expected
 
     def run(self, software, helper):
         """
@@ -26,16 +28,6 @@ class Metric(yapsy.IPlugin.IPlugin):
         :returns:
             This should be an integer between 0 and 100
         """
-        raise NotImplementedError("This method must be overridden")
-
-    def get_short_description(self):
-        """A one or two sentence description of the metric"""
-        raise NotImplementedError("This method must be overridden")
-
-    def get_long_description(self):
-        """ (Optional) A longer descriptions of the metric
-        :return:
-         description of the metric"""
         raise NotImplementedError("This method must be overridden")
 
     def get_feedback(self):

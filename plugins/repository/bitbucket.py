@@ -1,10 +1,16 @@
 import logging
 
-from plugins.metric.license import LicenseMetric
-import plugins.repository.helper as helper
+from github3 import GitHub
+
+import config
+from plugins.repository.helper import *
 
 
-class BitBucketHelper(helper.RepositoryHelper):
+class BitBucketHelper(RepositoryHelper):
+
+    def __init__(self, repo_url=None):
+        self.repo_url = repo_url
+
     def can_process(self, url):
         if "bitbucket.com" in url:
             self.repo_url = url
@@ -12,15 +18,17 @@ class BitBucketHelper(helper.RepositoryHelper):
         else:
             return False
 
-    def __init__(self, repo_url=None):
-        self.repo_url = repo_url
-
-        if self.repo_url is not None:
-            logging.info('Logging in to BitBucket')
-
-    def get_license(self):
-        """Identify and return license file
-            :returns
-                The contents of the license file as a (something - Weakly typed ftw)
+    def login(self):
         """
-        return LicenseMetric(filename="Dummy", license_text="None")
+        Login using the appropriate credentials
+        :return:
+        """
+        raise NotImplementedError("This method must be overridden")
+
+    def get_files_from_root(self, candidate_filenames):
+        """
+        Given a list of candidate file names, examine the repository root, returning the file names and contents
+        :param candidate_filenames: A list of the files of interest e.g. ['COPYING','LICENSE']
+        :return: A Dictionary of the form {'filename':file_contents,...}
+        """
+        raise NotImplementedError("This method must be overridden")
