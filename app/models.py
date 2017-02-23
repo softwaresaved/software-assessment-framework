@@ -35,13 +35,15 @@ class Score(db.Model):
     __tablename__ = 'score'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     software_id = db.Column(db.Integer, db.ForeignKey('software.id'))
+    category = db.Column(db.Text)
     short_description = db.Column(db.Text)
     long_description = db.Column(db.Text)
     value = db.Column(db.Integer)
     feedback = db.Column(db.Text)
 
-    def __init__(self, software_id, short_description, long_description, value, feedback):
+    def __init__(self, software_id, category, short_description, long_description, value, feedback):
         self.software_id = software_id
+        self.category = category
         self.short_description = short_description
         self.long_description = long_description
         self.value = value
