@@ -11,7 +11,7 @@ class SoftwareSubmitForm(FlaskForm):
     name = StringField('Software Name', validators=[DataRequired()])
     description = TextAreaField('Description', render_kw={"rows": 10})
     version = StringField('Version')
-    url = StringField('Repository URL')
+    url = StringField('Repository URL', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class MultiCheckboxField(SelectMultipleField):
