@@ -2,19 +2,19 @@ import logging
 import plugins.metric.metric as metric
 
 
-class VitalityMetric(metric.Metric):
+class FreshnessMetric(metric.Metric):
     """
-    Get a list of commits and calculate a vitality score based on this
+    Get a list of commits and calculate a freshness score based on this
     As a test, use the following.
     Scores:
     0 if no commits found
-    50 if one committer found
-    100 if more than one committer found
+    50 if one commit found
+    100 if more than one commit found
     """
 
     CATEGORY = "MAINTAINABILITY"
-    SHORT_DESCRIPTION = "Calculate number of committers"
-    LONG_DESCRIPTION = "Calculate the vitality of a repository."
+    SHORT_DESCRIPTION = "Actively developed?"
+    LONG_DESCRIPTION = "Calculate the freshness of a repository."
 
     def run(self, software, helper):
         """
@@ -25,35 +25,27 @@ class VitalityMetric(metric.Metric):
         self.score = 0
         list_commits = helper.get_commits()
 
-        seen = set([])
-        unique_committers = []
+        number_commits = len(list_commits)
 
-        for c in list_commits:
-            if c not in seen:
-                seen.add(c)
-                unique_committers.append(c.committer)
-
-        number_committers = len(unique_committers)
-
-        if number_committers <= 0:
+        if number_commits <= 0:
             self.score = 0
             self.feedback = "This is a DEAD repository."
         else:
-            if number_committers <= 1:
+            if number_commits <= 1:
                 self.score = 50
-                self.feedback = "You would do well to improve your bus factor"
+                self.feedback = "Good job! You've dumped your code in a repo!"
             else:
                 self.score = 100
-                self.feedback = "Excellent!!! You have more than one committer!!!"
+                self.feedback = "Excellent!!! You have an active repo!!!"
 
 
     def get_score(self):
         """
         Get the results of running the metric.
         :returns:
-        0 if no committers found
-        50 if one committer found
-        100 if more than one committer found
+        0 if no commits found
+        50 if one commit found
+        100 if more than one commit found
         """
         return self.score
 
