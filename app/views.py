@@ -58,9 +58,11 @@ def index():
 
 
 # Metrics Selection and Execution
-@app.route('/metrics_selection', methods=['GET', 'POST'])
+@app.route('/metrics/select', methods=['GET', 'POST'])
 def metrics_selection():
     # Load the software from the id stored in the session
+    # NB - We use the software_id from the session, rather than from the request,
+    # this prevents users other than the submitter changing the metrics to be run
     sw = Software.query.filter_by(id=session['sw_id']).first()
 
     # Load metrics
@@ -103,29 +105,28 @@ def metrics_selection():
             repos_helper.login()
 
         # Run the appropriate metrics
-        session['availability_score_ids'] = run_metrics(metricRunForm.metrics_availability.data, metrics, sw, repos_helper)
-        session['usability_score_ids']= run_metrics(metricRunForm.metrics_usability.data, metrics, sw, repos_helper)
-        session['maintainability_score_ids']= run_metrics(metricRunForm.metrics_maintainability.data, metrics, sw, repos_helper)
-        session['portability_score_ids'] = run_metrics(metricRunForm.metrics_portability.data, metrics, sw, repos_helper)
-
-        # FIXME - just save the software_id and load from there.
+        run_metrics(metricRunForm.metrics_availability.data, metrics, sw, repos_helper)
+        run_metrics(metricRunForm.metrics_usability.data, metrics, sw, repos_helper)
+        run_metrics(metricRunForm.metrics_maintainability.data, metrics, sw, repos_helper)
+        run_metrics(metricRunForm.metrics_portability.data, metrics, sw, repos_helper)
 
         # Forward to results display
-        return redirect(url_for('metrics_results'))
+        return redirect(url_for('metrics_results', software_id=sw.id))
 
     return render_template('metrics_selection.html', form=metricRunForm, software=sw)
 
 
 # Metrics results
-@app.route('/metrics_results', methods=['GET'])
-def metrics_results():
-    availability_scores = load_scores(session['availability_score_ids'])
-    usability_scores = load_scores(session['usability_score_ids'])
-    maintainability_scores = load_scores(session['maintainability_score_ids'])
-    portability_scores = load_scores(session['portability_score_ids'])
+@app.route('/metrics/results/<software_id>', methods=['GET'])
+def metrics_results(software_id):
+    # Load the Software
+    sw = Software.query.filter_by(id=software_id).first()
 
-    # Load the software from the id stored in the session
-    sw = Software.query.filter_by(id=session['sw_id']).first()
+    # Load the scores
+    availability_scores = Score.query.filter_by(software_id=software_id, category="AVAILABILITY")
+    usability_scores = Score.query.filter_by(software_id=software_id, category="USABILITY")
+    maintainability_scores = Score.query.filter_by(software_id=software_id, category="MAINTAINABILITY")
+    portability_scores = Score.query.filter_by(software_id=software_id, category="PORTABILITY")
 
     return render_template('metrics_results.html', software=sw, availability_scores=availability_scores, usability_scores=usability_scores, maintainability_scores=maintainability_scores, portability_scores=portability_scores)
 
@@ -157,12 +158,3 @@ def run_metrics(formData, metrics, sw, repos_helper):
                 db.session.commit()
                 score_ids.append(score.id)
     return score_ids
-
-
-def load_scores(score_ids):
-    scores = []
-    for score_id in score_ids:
-        scores.append(Score.query.filter_by(id=score_id).first())
-    return scores
-
-
