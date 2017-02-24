@@ -102,17 +102,6 @@ class GitHubHelper(RepositoryHelper):
         for c in self.repo.iter_commits(sha, path, author, number, etag, since, until):
             list_commits.append(c)
 
-#        test_commitid = "6dcb09b5b57875f334f61aebed695e2e4193db5e"
-#        test_committer = "Monalisa Octocat"
-#        test_timestamp = "2011-04-14T16:00:49Z"
-#
-#        c = Commit(test_commitid,test_committer,test_timestamp)
-#        list_commits.append(c)
-
-#        d = Commit("20199d86cb415d66d4608d6a075af11ec66f3e8f","js-robinson","2016-02-23T23:21:49Z")
-#        list_commits.append(d)
-
         logging.info('Retrieved ' + str(len(list_commits)) + ' commits from repository with Username: ' + self.user_name + " / Repo: " + self.repo_name + "...")
-
 
         return list_commits
