@@ -1,0 +1,6 @@
+[Core]
+Name = VitalityMetric
+Module = vitality
+
+[Documentation]
+Description = Calculate the vitality of a repository
