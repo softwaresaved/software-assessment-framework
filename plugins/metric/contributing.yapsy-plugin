@@ -1,0 +1,6 @@
+[Core]
+Name = ContributingMetric
+Module = contributing
+
+[Documentation]
+Description = Find a CONTRIBUTING file

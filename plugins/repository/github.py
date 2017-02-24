@@ -79,3 +79,29 @@ class GitHubHelper(RepositoryHelper):
                     found_files[name] = self.repo.contents(name).decoded.decode('UTF-8')
 
         return found_files
+
+    def get_commits(self, sha=None, path=None, author=None, number=-1, etag=None, since=None, until=None):
+        """
+        Return a list of all commits in a repository
+        :params:
+        Parameters:
+        sha (str) – (optional), sha or branch to start listing commits from
+        path (str) – (optional), commits containing this path will be listed
+        author (str) – (optional), GitHub login, real name, or email to filter commits by (using commit author)
+        number (int) – (optional), number of commits to return. Default: -1 returns all commits
+        etag (str) – (optional), ETag from a previous request to the same endpoint
+        since (datetime or string) – (optional), Only commits after this date will be returned. This can be a datetime or an ISO8601 formatted date string.
+        until (datetime or string) – (optional), Only commits before this date will be returned. This can be a datetime or an ISO8601 formatted date string.
+        :return: a list of Commit
+        """
+
+        # TODO: Should investigate proper use of GitHubIterator to help ratelimiting: https://github3py.readthedocs.io/en/master/examples/iterators.html
+
+        list_commits = []
+
+        for c in self.repo.iter_commits(sha, path, author, number, etag, since, until):
+            list_commits.append(c)
+
+        logging.info('Retrieved ' + str(len(list_commits)) + ' commits from repository with Username: ' + self.user_name + " / Repo: " + self.repo_name + "...")
+
+        return list_commits

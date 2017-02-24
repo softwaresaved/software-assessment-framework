@@ -1,0 +1,6 @@
+[Core]
+Name = FreshnessMetric
+Module = freshness
+
+[Documentation]
+Description = Calculate the freshness of a repository

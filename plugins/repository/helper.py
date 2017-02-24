@@ -31,6 +31,12 @@ class RepositoryHelper(yapsy.IPlugin.IPlugin):
         """
         raise NotImplementedError("This method must be overridden")
 
+    def get_list_of_commits(self):
+        """
+        Return a list of commits from the repository
+        :return: A list of Commit data structure
+        """
+        raise NotImplementedError("This method must be overridden")
 
 def find_repository_helper(url):
     """
@@ -67,3 +73,10 @@ class RepositoryHelperRepoError(RepositoryHelperError):
         message -- explanation of the error
     """
 
+class Commit:
+    """Base data structure for handling commits"""
+
+    def __init__(self, commitid, committer, timestamp):
+        self.commitid = commitid
+        self.committer = committer
+        self.timestamp = timestamp
