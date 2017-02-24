@@ -79,3 +79,40 @@ class GitHubHelper(RepositoryHelper):
                     found_files[name] = self.repo.contents(name).decoded.decode('UTF-8')
 
         return found_files
+
+    def get_commits(self, sha=None, path=None, author=None, number=-1, etag=None, since=None, until=None):
+        """
+        Return a list of all commits in a repository
+        :params:
+        Parameters:
+        sha (str) – (optional), sha or branch to start listing commits from
+        path (str) – (optional), commits containing this path will be listed
+        author (str) – (optional), GitHub login, real name, or email to filter commits by (using commit author)
+        number (int) – (optional), number of commits to return. Default: -1 returns all commits
+        etag (str) – (optional), ETag from a previous request to the same endpoint
+        since (datetime or string) – (optional), Only commits after this date will be returned. This can be a datetime or an ISO8601 formatted date string.
+        until (datetime or string) – (optional), Only commits before this date will be returned. This can be a datetime or an ISO8601 formatted date string.
+        :return: a list of Commit
+        """
+
+        # TODO: Should investigate proper use of GitHubIterator to help ratelimiting: https://github3py.readthedocs.io/en/master/examples/iterators.html
+
+        list_commits = []
+
+        for c in self.repo.iter_commits(sha, path, author, number, etag, since, until):
+            list_commits.append(c)
+
+#        test_commitid = "6dcb09b5b57875f334f61aebed695e2e4193db5e"
+#        test_committer = "Monalisa Octocat"
+#        test_timestamp = "2011-04-14T16:00:49Z"
+#
+#        c = Commit(test_commitid,test_committer,test_timestamp)
+#        list_commits.append(c)
+
+#        d = Commit("20199d86cb415d66d4608d6a075af11ec66f3e8f","js-robinson","2016-02-23T23:21:49Z")
+#        list_commits.append(d)
+
+        logging.info('Retrieved ' + str(len(list_commits)) + ' commits from repository with Username: ' + self.user_name + " / Repo: " + self.repo_name + "...")
+
+
+        return list_commits
