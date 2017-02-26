@@ -52,5 +52,5 @@ class Score(db.Model):
 
 # Create database if required
 if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI']):
-    app.logger.info("Creating tables in data.sqlite")
+    app.logger.info("Creating tables in ./data.sqlite")
     db.create_all()
