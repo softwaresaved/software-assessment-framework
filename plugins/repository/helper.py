@@ -31,12 +31,22 @@ class RepositoryHelper(yapsy.IPlugin.IPlugin):
         """
         raise NotImplementedError("This method must be overridden")
 
-    def get_list_of_commits(self):
+    def get_commits(self, sha=None, path=None, author=None, number=-1, etag=None, since=None, until=None):
         """
-        Return a list of commits from the repository
-        :return: A list of Commit data structure
+        Return a list of all commits in a repository
+        :params:
+        Parameters:
+        sha (str) – (optional), sha or branch to start listing commits from
+        path (str) – (optional), commits containing this path will be listed
+        author (str) – (optional), GitHub login, real name, or email to filter commits by (using commit author)
+        number (int) – (optional), number of commits to return. Default: -1 returns all commits
+        etag (str) – (optional), ETag from a previous request to the same endpoint
+        since (datetime or string) – (optional), Only commits after this date will be returned. This can be a datetime or an ISO8601 formatted date string.
+        until (datetime or string) – (optional), Only commits before this date will be returned. This can be a datetime or an ISO8601 formatted date string.
+        :return: a list of Commit
         """
         raise NotImplementedError("This method must be overridden")
+
 
 def find_repository_helper(url):
     """
@@ -72,6 +82,7 @@ class RepositoryHelperRepoError(RepositoryHelperError):
     Attributes:
         message -- explanation of the error
     """
+
 
 class Commit:
     """Base data structure for handling commits"""
