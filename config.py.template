@@ -5,7 +5,7 @@ import logging
 
 # logging.DEBUG > logging.INFO > logging.WARNING > logging.ERROR > logging.CRITICAL
 log_level = logging.DEBUG
-log_file_name = "sag.log"
+log_file_name = "saf.log"
 
 ## RepositoryHelper properties
 

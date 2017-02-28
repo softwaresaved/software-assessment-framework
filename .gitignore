@@ -3,3 +3,4 @@ venv/
 __pycache__
 data.sqlite
 saf.log*
+config.py
