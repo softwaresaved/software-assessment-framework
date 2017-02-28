@@ -15,21 +15,21 @@ import plugins.metric
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index')
 def index():
-    softwareSubmitForm = SoftwareSubmitForm()
+    software_submit_form = SoftwareSubmitForm()
     failed = False
-    if softwareSubmitForm.validate_on_submit():
-        app.logger.info("Received a software submission: "+softwareSubmitForm.url.data)
+    if software_submit_form.validate_on_submit():
+        app.logger.info("Received a software submission: "+software_submit_form.url.data)
 
         # Examine the URL, locate a RepositoryHelper to use
-        repos_helper = find_repository_helper(softwareSubmitForm.url.data)
+        repos_helper = find_repository_helper(software_submit_form.url.data)
         if repos_helper is None:
             failed = True
-            fail_message = "Sorry, we don't yet know how to talk to the repository at: "+ softwareSubmitForm.url.data
-            app.logger.error("Unable to find a repository helper for: " + softwareSubmitForm.url.data)
+            fail_message = "Sorry, we don't yet know how to talk to the repository at: " + software_submit_form.url.data
+            app.logger.error("Unable to find a repository helper for: " + software_submit_form.url.data)
         else:
             # try to login
             try:
-                login = repos_helper.login()
+                repos_helper.login()
             except RepositoryHelperError as err:
                 failed = True
                 fail_message = err.message
@@ -41,11 +41,11 @@ def index():
         else:
             # Create a new Software instance
             sw = Software(id=None,
-                          name=softwareSubmitForm.name.data,
-                          description=softwareSubmitForm.description.data,
-                          version=softwareSubmitForm.version.data,
+                          name=software_submit_form.name.data,
+                          description=software_submit_form.description.data,
+                          version=software_submit_form.version.data,
                           submitter='User',
-                          url=softwareSubmitForm.url.data)
+                          url=software_submit_form.url.data)
             # Persist it
             db.session.add(sw)
             db.session.commit()
@@ -54,7 +54,7 @@ def index():
             # Forward to metrics selection
             return redirect(url_for('metrics_selection'))
 
-    return render_template('index.html', form=softwareSubmitForm)
+    return render_template('index.html', form=software_submit_form)
 
 
 # Metrics Selection and Execution
@@ -95,25 +95,25 @@ def metrics_selection():
     setattr(MetricRunForm, 'metrics_portability', MultiCheckboxField('Portability', choices=metrics_portability))
     setattr(MetricRunForm, 'submit', SubmitField('Run Metrics'))
 
-    metricRunForm = MetricRunForm()
+    metric_run_form = MetricRunForm()
 
     # Deal with submission
-    if metricRunForm.validate_on_submit():
+    if metric_run_form.validate_on_submit():
         # Load the RepositoryHelper again
         if sw.url and sw.url != "".strip():
             repos_helper = find_repository_helper(sw.url)
             repos_helper.login()
 
         # Run the appropriate metrics
-        run_metrics(metricRunForm.metrics_availability.data, metrics, sw, repos_helper)
-        run_metrics(metricRunForm.metrics_usability.data, metrics, sw, repos_helper)
-        run_metrics(metricRunForm.metrics_maintainability.data, metrics, sw, repos_helper)
-        run_metrics(metricRunForm.metrics_portability.data, metrics, sw, repos_helper)
+        run_metrics(metric_run_form.metrics_availability.data, metrics, sw, repos_helper)
+        run_metrics(metric_run_form.metrics_usability.data, metrics, sw, repos_helper)
+        run_metrics(metric_run_form.metrics_maintainability.data, metrics, sw, repos_helper)
+        run_metrics(metric_run_form.metrics_portability.data, metrics, sw, repos_helper)
 
         # Forward to results display
         return redirect(url_for('metrics_results', software_id=sw.id))
 
-    return render_template('metrics_selection.html', form=metricRunForm, software=sw)
+    return render_template('metrics_selection.html', form=metric_run_form, software=sw)
 
 
 # Metrics results
@@ -131,17 +131,17 @@ def metrics_results(software_id):
     return render_template('metrics_results.html', software=sw, availability_scores=availability_scores, usability_scores=usability_scores, maintainability_scores=maintainability_scores, portability_scores=portability_scores)
 
 
-def run_metrics(formData, metrics, sw, repos_helper):
+def run_metrics(form_data, metrics, sw, repos_helper):
     """
     Match the selected boxes from the form submission to metrics and run.  Save the scores and feedback
-    :param formData: Metrics to run (List of md5 of the description)
+    :param form_data: Metrics to run (List of md5 of the description)
     :param metrics: List of the available Metrics
     :param sw: The Software object being tested
     :param repos_helper: A RepositoryHelper object
     :return:
     """
     score_ids = []
-    for m in formData:
+    for m in form_data:
         for metric in metrics:
             if hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest() == m:
                 app.logger.info("Running metric: " + metric.SHORT_DESCRIPTION)

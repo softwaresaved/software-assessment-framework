@@ -19,7 +19,7 @@ class RepositoryHelper(yapsy.IPlugin.IPlugin):
     def login(self):
         """
         Login using the appropriate credentials
-        :return:
+        :raises RepositoryHelperRepoError if the login fails due to bad credentials or missing repository
         """
         raise NotImplementedError("This method must be overridden")
 

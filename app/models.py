@@ -1,4 +1,3 @@
-import logging
 from . import app
 from flask_sqlalchemy import SQLAlchemy
 import datetime
