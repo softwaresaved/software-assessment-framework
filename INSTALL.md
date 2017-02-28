@@ -41,6 +41,7 @@ If you use conda to manage virtual environments, replace step 1 as follows:
 
 
 ## Configuration
+Make a copy of config.py.template as config.py
 Some operations employ the GitHub API, and require a GitHub [Personal Access Token](https://github.com/settings/tokens) to be generated and inserted into `config.py`
 
 ## Running
