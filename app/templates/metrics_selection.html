@@ -4,7 +4,7 @@
     <div class="page-header">
         <h2>{{ software.name }} - Select Metrics</h2>
     </div>
-    <form action="{{ url_for('metrics_selection') }}" method="POST">
+    <form action="{{ url_for('metrics_automated') }}" method="POST">
     {{ form.csrf_token }}
     <h3>{{ form.metrics_availability.label }}</h3>
     <div>{{ form.metrics_availability }}</div>

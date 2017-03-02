@@ -12,6 +12,7 @@ class VitalityMetric(metric.Metric):
     100 if more than one committer found
     """
 
+    INTERACTIVE = False
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Calculate number of committers"
     LONG_DESCRIPTION = "Calculate the vitality of a repository."

@@ -12,6 +12,7 @@ class FreshnessMetric(metric.Metric):
     100 if more than one commit found
     """
 
+    INTERACTIVE = False
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Actively developed?"
     LONG_DESCRIPTION = "Calculate the freshness of a repository."

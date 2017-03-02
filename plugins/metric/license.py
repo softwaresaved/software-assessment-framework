@@ -13,14 +13,16 @@ class LicenseMetric(metric.Metric):
     100 if an identifiable license if found
     """
 
+    INTERACTIVE = False
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Has a license file?"
     LONG_DESCRIPTION = "Test for the existence of file called 'LICENSE' and attempt to identify it from its contents."
 
-    def run(self, software, helper):
+    def run(self, software, helper, form_data=None):
         """
         :param software: An Software entity
         :param helper: A Repository Helper
+        :param form_data: (Optional) For interactive
         :return:
         """
         self.score = 0

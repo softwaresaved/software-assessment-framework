@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h2>{{ software.name }} - Self-Assessment Metrics</h2>
+    </div>
+    <form action="{{ url_for('metrics_interactive') }}" method="POST">
+    {{ form.csrf_token }}
+
+    {% for field in form %}
+       {% if field.type == "RadioField" %}
+        <div>{{ field.label }} {{ field }}</div>
+       {% endif %}
+    {% endfor %}
+
+
+
+    <div>{{ form.submit() }}</div>
+    </form>
+
+{% endblock %}

@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired
 
 # Forms for webapp.  Uses WTForms
 
+
 class SoftwareSubmitForm(FlaskForm):
     """
     Form for initial submission of software for evaluation
@@ -13,6 +14,7 @@ class SoftwareSubmitForm(FlaskForm):
     version = StringField('Version')
     url = StringField('Repository URL', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
 
 class MultiCheckboxField(SelectMultipleField):
     """

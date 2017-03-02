@@ -10,15 +10,18 @@ class Metric(yapsy.IPlugin.IPlugin):
     The presence of an identifiable license results in a score of 100.
     """
 
-    CATEGORY = "UNSET"  # AVAILABILITY, USABILITY, MAINTAINABILITY, PORTABILITY
-    SHORT_DESCRIPTION = "UNSET"  # A one or two sentence description of the metric"
-    LONG_DESCRIPTION = "UNSET"  # A few sentences describing the outcome, and providing tips if the outcome was not as expected
+    INTERACTIVE = None  # None / False - Non-interactive - Doesn't require user input beyond the repository URL
+                        # True - Interactive - Assessment is based solely on user input
+    CATEGORY = "UNSET"  # "AVAILABILITY", "USABILITY", "MAINTAINABILITY", "PORTABILITY"
+    SHORT_DESCRIPTION = "UNSET"  # A one or two sentence description of the metric.  If the metric is interactive, this will be presented to the user as the question
+    LONG_DESCRIPTION = "UNSET"  # Longer description of the metric, how it works and explanation of scoring
 
-    def run(self, software, helper):
+    def run(self, software, helper=None, form_input=None):
         """
         The main method to run the metric.
         :param software: An instance of saf.software.Software
-        :param helper: An instance of plugins.repository.helper.RepositoryHelper
+        :param helper: (Optional) An instance of plugins.repository.helper.RepositoryHelper, None if interactive
+        :param form_input: (Optional) For interactive
         :return:
         """
         raise NotImplementedError("This method must be overridden")
@@ -36,3 +39,16 @@ class Metric(yapsy.IPlugin.IPlugin):
         :return:
         """
         raise NotImplementedError("This method must be overridden")
+
+    def get_ui_choices(self):
+        """
+        Optional.  If the metric is interactive, a set of radio buttons is generated based on this.
+        :returns: A Dictonary {Option Value: Option label}
+        e.g:
+         return {
+            "100": "Comprehensive documentation covering all aspects of installation and use",
+            "50": "Minimal installation documentation only",
+            "0": "No Docmentation"
+        }
+        The selected Value is returned to the run() method above.
+        """

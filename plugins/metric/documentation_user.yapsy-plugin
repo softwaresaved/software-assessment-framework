@@ -1,0 +1,6 @@
+[Core]
+Name = DocumentationUserMetric
+Module = documentation_user
+
+[Documentation]
+Description = Ask submitter about the extent of their end-user documentation
