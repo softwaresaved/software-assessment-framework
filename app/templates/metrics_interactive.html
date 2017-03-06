@@ -2,7 +2,8 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h2>{{ software.name }} - Self-Assessment Metrics</h2>
+        <h2>Self Assessment Metrics</h2>
+        <h3>{{ software.name }}</h3>
     </div>
     <form action="{{ url_for('metrics_interactive') }}" method="POST">
     {{ form.csrf_token }}

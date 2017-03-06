@@ -1,0 +1,6 @@
+[Core]
+Name = DocumentationDeveloperMetric
+Module = documentation_developer
+
+[Documentation]
+Description = Ask submitter about the extent of their developer documentation

@@ -76,11 +76,13 @@ def metrics_interactive():
 
     for metric in metrics:
         if metric.INTERACTIVE:
+            #ToDo - classify  as below
             metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
+
             setattr(InteractiveMetricRunForm, metric_key,
                     RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
 
-    setattr(InteractiveMetricRunForm, 'submit', SubmitField('Run Metrics'))
+    setattr(InteractiveMetricRunForm, 'submit', SubmitField('Next'))
     # Get an instance
     interactive_metric_run_form = InteractiveMetricRunForm()
 
