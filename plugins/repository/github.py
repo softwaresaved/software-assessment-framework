@@ -48,6 +48,8 @@ class GitHubHelper(RepositoryHelper):
                 self.repo_name = splitted[-1]
                 self.repo_name = self.repo_name.replace('.git', '')
         else:
+            if self.repo_url.endswith("/"):
+                self.repo_url = self.repo_url[:-1]  # Remove trailing slash
             splitted = self.repo_url.split('/')
             self.user_name = splitted[-2]
             self.repo_name = splitted[-1]
