@@ -16,7 +16,7 @@ class Metric(yapsy.IPlugin.IPlugin):
     SHORT_DESCRIPTION = "UNSET"  # A one or two sentence description of the metric.  If the metric is interactive, this will be presented to the user as the question
     LONG_DESCRIPTION = "UNSET"  # Longer description of the metric, how it works and explanation of scoring
 
-    def run(self, software, helper=None, form_input=None):
+    def run(self, software, helper=None, form_data=None):
         """
         The main method to run the metric.
         :param software: An instance of saf.software.Software

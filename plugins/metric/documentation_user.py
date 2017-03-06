@@ -22,6 +22,7 @@ class DocumentationUserMetric(metric.Metric):
         The main method to run the metric.
         :param software: An instance of saf.software.Software
         :param helper: An instance of plugins.repository.helper.RepositoryHelper
+        :param form_data: (Optional) For interactive
         :return:
         """
         self.score = int(form_data)
