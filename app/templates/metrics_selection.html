@@ -8,17 +8,26 @@
 
     <form action="{{ url_for('metrics_automated') }}" method="POST">
     {{ form.csrf_token }}
-    <h3>{{ form.metrics_availability.label }}</h3>
-    <div>{{ form.metrics_availability }}</div>
 
-    <h3>{{ form.metrics_usability.label }}</h3>
-    <div>{{ form.metrics_usability }}</div>
+    {% if form.metrics_availability.choices|length > 0 %}
+        <h3>{{ form.metrics_availability.label }}</h3>
+        <div>{{ form.metrics_availability }}</div>
+    {% endif %}
 
-    <h3>{{ form.metrics_maintainability.label }}</h3>
-    <div>{{ form.metrics_maintainability }}</div>
+    {% if form.metrics_usability.choices|length > 0 %}
+        <h3>{{ form.metrics_usability.label }}</h3>
+        <div>{{ form.metrics_usability }}</div>
+    {% endif %}
 
-    <h3>{{ form.metrics_portability.label }}</h3>
-    <div>{{ form.metrics_portability }}</div>
+    {% if form.metrics_maintainability.choices|length > 0 %}
+        <h3>{{ form.metrics_maintainability.label }}</h3>
+        <div>{{ form.metrics_maintainability }}</div>
+    {% endif %}
+
+    {% if form.metrics_portability.choices|length > 0 %}
+        <h3>{{ form.metrics_portability.label }}</h3>
+        <div>{{ form.metrics_portability }}</div>
+    {% endif %}
 
     <div>{{ form.submit() }}</div>
     </form>

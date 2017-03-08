@@ -6,18 +6,22 @@
         <h3>{{ software.name }}</h3>
     </div>
 
-    <h3><label>Availability</label></h3>
-    <ul>
-        {% for score in availability_scores %}
-            <li>
-                <div>
-                    <h4>{{ score.short_description }}</h4>
-                    <div>Score: {{ score.value }}</div>
-                    <div>Feedback: {{ score.feedback }}</div>
-                </div>
-            </li>
-        {%  endfor %}
-    </ul>
+    {% if availability_scores.all()|length > 0 %}
+        <h3><label>Availability</label></h3>
+        <ul>
+            {% for score in availability_scores %}
+                <li>
+                    <div>
+                        <h4>{{ score.short_description }}</h4>
+                        <div>Score: {{ score.value }}</div>
+                        <div>Feedback: {{ score.feedback }}</div>
+                    </div>
+                </li>
+            {%  endfor %}
+        </ul>
+    {% endif %}
+
+    {% if usability_scores.all()|length > 0 %}
     <h3><label>Usability</label></h3>
     <ul>
         {% for score in usability_scores %}
@@ -30,6 +34,9 @@
             </li>
         {%  endfor %}
     </ul>
+    {% endif %}
+
+    {% if maintainability_scores.all()|length > 0 %}
     <h3><label>Maintainability</label></h3>
     <ul>
         {% for score in maintainability_scores %}
@@ -42,6 +49,9 @@
             </li>
         {%  endfor %}
     </ul>
+    {% endif %}
+
+    {% if portability_scores.all()|length > 0 %}
     <h3><label>Portability</label></h3>
     <ul>
         {% for score in portability_scores %}
@@ -54,5 +64,7 @@
             </li>
         {%  endfor %}
     </ul>
+    {% endif %}
+
 
 {% endblock %}
