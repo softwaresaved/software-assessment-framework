@@ -5,7 +5,8 @@
         <h2>Metrics Scores</h2>
         <h3>{{ software.name }}</h3>
     </div>
-    <h3>Availability</h3>
+
+    <h3><label>Availability</label></h3>
     <ul>
         {% for score in availability_scores %}
             <li>
@@ -17,7 +18,7 @@
             </li>
         {%  endfor %}
     </ul>
-    <h3>Usability</h3>
+    <h3><label>Usability</label></h3>
     <ul>
         {% for score in usability_scores %}
             <li>
@@ -29,7 +30,7 @@
             </li>
         {%  endfor %}
     </ul>
-    <h3>Maintainability</h3>
+    <h3><label>Maintainability</label></h3>
     <ul>
         {% for score in maintainability_scores %}
             <li>
@@ -41,7 +42,7 @@
             </li>
         {%  endfor %}
     </ul>
-    <h3>Portability</h3>
+    <h3><label>Portability</label></h3>
     <ul>
         {% for score in portability_scores %}
             <li>
