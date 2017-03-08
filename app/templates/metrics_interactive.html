@@ -5,18 +5,38 @@
         <h2>Self Assessment Metrics</h2>
         <h3>{{ software.name }}</h3>
     </div>
+
     <form action="{{ url_for('metrics_interactive') }}" method="POST">
-    {{ form.csrf_token }}
+    <h3>{{ form.availability.label }}</h3>
+        {% for field in form.availability %}
+            {% if field.type == "RadioField" %}
+                <div>{{ field.label }} {{ field }}</div>
+             {% endif %}
+        {% endfor %}
 
-    {% for field in form %}
-       {% if field.type == "RadioField" %}
-        <div>{{ field.label }} {{ field }}</div>
-       {% endif %}
-    {% endfor %}
+    <h3>{{ form.usability.label }}</h3>
+        {% for field in form.usability %}
+            {% if field.type == "RadioField" %}
+                <div>{{ field.label }} {{ field }}</div>
+             {% endif %}
+        {% endfor %}
 
+    <h3>{{ form.maintainability.label }}</h3>
+        {% for field in form.maintainability %}
+            {% if field.type == "RadioField" %}
+                <div>{{ field.label }} {{ field }}</div>
+             {% endif %}
+        {% endfor %}
 
+    <h3>{{ form.portability.label }}</h3>
+        {% for field in form.portability %}
+            {% if field.type == "RadioField" %}
+                <div>{{ field.label }} {{ field }}</div>
+             {% endif %}
+        {% endfor %}
 
     <div>{{ form.submit() }}</div>
     </form>
+
 
 {% endblock %}

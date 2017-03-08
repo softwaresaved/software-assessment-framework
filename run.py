@@ -11,6 +11,9 @@ def main():
                         filename=config.log_file_name,
                         level=config.log_level)
     logging.info('-- Starting the Software Assessment Framework --')
+
+    app.config['WTF_CSRF_ENABLED'] = False
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.run(debug=True)
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
-from wtforms import RadioField, SubmitField, SelectMultipleField
+from wtforms import RadioField, SubmitField, FormField
 from app.main.forms import SoftwareSubmitForm, MultiCheckboxField
 from app.models import db, Software, Score
 from app import app
@@ -52,14 +52,14 @@ def index():
             db.session.commit()
             # Add to session
             session['sw_id'] = sw.id
-            # Forward to metrics selection
+            # Forward to interactive (self-assessment) metrics selection
             return redirect(url_for('metrics_interactive'))
 
     return render_template('index.html', form=software_submit_form)
 
 
-# Non-interactive Metrics Selection
-@app.route('/metrics/select/1', methods=['GET', 'POST'])
+# Interactive Metrics Selection
+@app.route('/metrics/select/interactive', methods=['GET', 'POST'])
 def metrics_interactive():
     # Load the software from the id stored in the session
     # NB - We use the software_id from the session, rather than from the request,
@@ -71,41 +71,68 @@ def metrics_interactive():
 
     # Construct the form
     # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it
-    class InteractiveMetricRunForm(FlaskForm):
+
+    # In order to be able to separate, and label the categories, we need to create individual sub-forms
+    class InteractiveMetricAvailabilityForm(FlaskForm):
+        pass
+
+    class InteractiveMetricUsabilityForm(FlaskForm):
+        pass
+
+    class InteractiveMetricMaintainabilityForm(FlaskForm):
+        pass
+
+    class InteractiveMetricPortabilityForm(FlaskForm):
         pass
 
     for metric in metrics:
         if metric.INTERACTIVE:
-            #ToDo - classify  as below
             metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
+            if metric.CATEGORY == "AVAILABILITY":
+                setattr(InteractiveMetricAvailabilityForm, metric_key,
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+            if metric.CATEGORY == "USABILITY":
+                setattr(InteractiveMetricUsabilityForm, metric_key,
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+            if metric.CATEGORY == "MAINTAINABILITY":
+                setattr(InteractiveMetricMaintainabilityForm, metric_key,
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+            if metric.CATEGORY == "PORTABILITY":
+                setattr(InteractiveMetricPortabilityForm, metric_key,
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
 
-            setattr(InteractiveMetricRunForm, metric_key,
-                    RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+    class InteractiveMetricRunForm(FlaskForm):
+        availability = FormField(InteractiveMetricAvailabilityForm)
+        usability = FormField(InteractiveMetricUsabilityForm)
+        maintainability = FormField(InteractiveMetricMaintainabilityForm)
+        portability = FormField(InteractiveMetricPortabilityForm)
+        submit = SubmitField('Next')
 
-    setattr(InteractiveMetricRunForm, 'submit', SubmitField('Next'))
     # Get an instance
     interactive_metric_run_form = InteractiveMetricRunForm()
 
     # Deal with submission
     if interactive_metric_run_form.validate_on_submit():
         # Run the metrics
-        run_interactive_metrics(interactive_metric_run_form.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.availability.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.usability.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.maintainability.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.portability.data, metrics, sw)
 
-        # Forward to results display
-        return redirect(url_for('metrics_automated', software_id=sw.id))
+        # Forward to automater metrics
+        return redirect(url_for('metrics_automated'))
 
     return render_template('metrics_interactive.html', form=interactive_metric_run_form, software=sw)
 
 
 # Automated Metrics Selection and Execution
-@app.route('/metrics/select/2', methods=['GET', 'POST'])
+@app.route('/metrics/select/automated', methods=['GET', 'POST'])
 def metrics_automated():
     # Load the software from the id stored in the session
     # NB - We use the software_id from the session, rather than from the request,
     # this prevents users other than the submitter changing the metrics to be run
     sw = Software.query.filter_by(id=session['sw_id']).first()
-
-    # Load metrics
+    # Load automated metrics
     app.logger.info("Finding automated metrics")
     metrics = plugins.metric.load()
 
@@ -113,6 +140,7 @@ def metrics_automated():
     # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it
     class MetricRunForm(FlaskForm):
         pass
+
     metrics_availability = []
     metrics_usability = []
     metrics_maintainability = []
@@ -147,10 +175,10 @@ def metrics_automated():
             repos_helper.login()
 
         # Run the appropriate metrics
-        run_metrics(metric_run_form.metrics_usability.data, metrics, sw, repos_helper)
-        run_metrics(metric_run_form.metrics_availability.data, metrics, sw, repos_helper)
-        run_metrics(metric_run_form.metrics_maintainability.data, metrics, sw, repos_helper)
-        run_metrics(metric_run_form.metrics_portability.data, metrics, sw, repos_helper)
+        run_automated_metrics(metric_run_form.metrics_usability.data, metrics, sw, repos_helper)
+        run_automated_metrics(metric_run_form.metrics_availability.data, metrics, sw, repos_helper)
+        run_automated_metrics(metric_run_form.metrics_maintainability.data, metrics, sw, repos_helper)
+        run_automated_metrics(metric_run_form.metrics_portability.data, metrics, sw, repos_helper)
 
         # Forward to results display
         return redirect(url_for('metrics_results', software_id=sw.id))
@@ -170,7 +198,12 @@ def metrics_results(software_id):
     maintainability_scores = Score.query.filter_by(software_id=software_id, category="MAINTAINABILITY")
     portability_scores = Score.query.filter_by(software_id=software_id, category="PORTABILITY")
 
-    return render_template('metrics_results.html', software=sw, availability_scores=availability_scores, usability_scores=usability_scores, maintainability_scores=maintainability_scores, portability_scores=portability_scores)
+    return render_template('metrics_results.html',
+                           software=sw,
+                           availability_scores=availability_scores,
+                           usability_scores=usability_scores,
+                           maintainability_scores=maintainability_scores,
+                           portability_scores=portability_scores)
 
 
 def run_interactive_metrics(form_data, all_metrics, sw):
@@ -203,7 +236,7 @@ def run_interactive_metrics(form_data, all_metrics, sw):
     return score_ids
 
 
-def run_metrics(form_data, metrics, sw, repos_helper):
+def run_automated_metrics(form_data, metrics, sw, repos_helper):
     """
     Match the selected boxes from the form submission to metrics and run.  Save the scores and feedback
     :param form_data: Metrics to run (List of md5 of the description)
