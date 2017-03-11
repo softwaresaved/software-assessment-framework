@@ -1,7 +1,12 @@
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% block head %}
+  {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
 {% block title %} Software Assessment Framework {% endblock %}
 {% block navbar %}
+
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
         <div class="navbar=header">

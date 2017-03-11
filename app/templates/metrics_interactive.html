@@ -1,51 +1,65 @@
 {% extends "base.html" %}
 
-{% block page_content %}
-    <div class="page-header">
-        <h2>Self Assessment Metrics</h2>
-        <h3>{{ software.name }}</h3>
+{% macro metric_block(metric_subform) %}
+    <div class="panel panel-info">
+        <div class="panel-heading ">
+            <div class="panel-title">
+                <div class="row">
+                    <span class="col-sm-7">{{ metric_subform.label }}</span>
+                    <div class="col-sm-5" title="Move the slider to indicate the importance of this to you">
+                        <div class="importance pull-right">
+                            <span class="label label-danger">Not important</span>
+                            <span>{{ metric_subform.importance }}</span>
+                            <span class="label label-success">Very important</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <h4>{{ metric_subform.description }}</h4>
+            <hr/>
+            <ol class="metric-question">
+            {% for field in metric_subform %}
+                {% if field.type == "RadioField" %}
+                    {% set importance_id = "IMPORTANCE_"+field.id[5:49] %}
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-7">
+                             {{ field.label(_class="inline-radio-label") }} {{ field(_class="inline-radio-label") }}
+                            </div>
+                            <div class="col-sm-5" title="Move the slider to indicate the importance of this to you">
+                                <div class="importance pull-right">
+                                    <span class="label label-danger">Not important</span>
+                                    <span>{{ metric_subform.form[importance_id] }}</span>
+                                    <span class="label label-success">Very important</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                 {% endif %}
+            {% endfor %}
+            </ol>
+        </div>
     </div>
+{% endmacro %}
 
-    <form action="{{ url_for('metrics_interactive') }}" method="POST">
 
-    {% if form.availability.form._fields|length > 0 %}
-        <h3>{{ form.availability.label }}</h3>
-        {% for field in form.availability %}
-            {% if field.type == "RadioField" %}
-                <div>{{ field.label }} {{ field }}</div>
-             {% endif %}
-        {% endfor %}
-    {% endif %}
+{% block page_content %}
+    <div class="container">
+        <div class="page-header">
+            <h2>Self Assessment</h2>
+            <h3>{{ software.name }}</h3>
+        </div>
 
-    {% if form.usability.form._fields|length > 0 %}
-        <h3>{{ form.usability.label }}</h3>
-        {% for field in form.usability %}
-            {% if field.type == "RadioField" %}
-                <div>{{ field.label }} {{ field }}</div>
-             {% endif %}
-        {% endfor %}
-    {% endif %}
-
-    {% if form.maintainability.form._fields|length > 0 %}
-        <h3>{{ form.maintainability.label }}</h3>
-        {% for field in form.maintainability %}
-            {% if field.type == "RadioField" %}
-                <div>{{ field.label }} {{ field }}</div>
-             {% endif %}
-        {% endfor %}
-    {% endif %}
-
-    {% if form.portability.form._fields|length > 0 %}
-        <h3>{{ form.portability.label }}</h3>
-        {% for field in form.portability %}
-            {% if field.type == "RadioField" %}
-                <div>{{ field.label }} {{ field }}</div>
-             {% endif %}
-        {% endfor %}
-    {% endif %}
-
-    <div>{{ form.submit() }}</div>
-    </form>
-
+        <form action="{{ url_for('metrics_interactive') }}" method="POST">
+            {% for f in form %}
+                {% if f.type == "FormField" %}
+                    {{ metric_block(f) }}
+                {% endif %}
+            {% endfor %}
+            <div>{{ form.submit(class_="btn btn-default") }}</div>
+        </form>
+    </div>
 
 {% endblock %}

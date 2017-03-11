@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
 from wtforms import RadioField, SubmitField, FormField
+from wtforms.fields.html5 import IntegerRangeField
 from app.main.forms import SoftwareSubmitForm, MultiCheckboxField
 from app.models import db, Software, Score
 from app import app
@@ -67,45 +68,55 @@ def metrics_interactive():
     sw = Software.query.filter_by(id=session['sw_id']).first()
     # Load interactive metrics
     app.logger.info("Finding Interactive metrics")
+    # FixMe - implement a category based filter for plugin loading to avoid repeatition below
     metrics = plugins.metric.load()
 
-    # Construct the form
-    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it
-
     # In order to be able to separate, and label the categories, we need to create individual sub-forms
+    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it
     class InteractiveMetricAvailabilityForm(FlaskForm):
-        pass
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
     class InteractiveMetricUsabilityForm(FlaskForm):
-        pass
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
     class InteractiveMetricMaintainabilityForm(FlaskForm):
-        pass
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
     class InteractiveMetricPortabilityForm(FlaskForm):
-        pass
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
+    # Add metrics to their appropriate sub-forms
+    # FixMe - Because the choices come from a dictionary, the sort order is random
     for metric in metrics:
         if metric.INTERACTIVE:
             metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
             if metric.CATEGORY == "AVAILABILITY":
                 setattr(InteractiveMetricAvailabilityForm, metric_key,
                         RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                setattr(InteractiveMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
+                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "USABILITY":
                 setattr(InteractiveMetricUsabilityForm, metric_key,
                         RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                setattr(InteractiveMetricUsabilityForm, "IMPORTANCE_"+metric_key,
+                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "MAINTAINABILITY":
                 setattr(InteractiveMetricMaintainabilityForm, metric_key,
                         RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                setattr(InteractiveMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
+                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "PORTABILITY":
                 setattr(InteractiveMetricPortabilityForm, metric_key,
                         RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric_key,
+                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
+    # Build the top-level form with the sub-forms
     class InteractiveMetricRunForm(FlaskForm):
-        availability = FormField(InteractiveMetricAvailabilityForm)
-        usability = FormField(InteractiveMetricUsabilityForm)
-        maintainability = FormField(InteractiveMetricMaintainabilityForm)
-        portability = FormField(InteractiveMetricPortabilityForm)
+        ff_a = FormField(InteractiveMetricAvailabilityForm, label="Availability", description="Can a user find the software (discovery) and can they obtain the software (access)?")
+        ff_u = FormField(InteractiveMetricUsabilityForm, label="Usability", description="Can a user understand the operation of the software, such they can use it, integrate it with other software and extend or modify it?")
+        ff_m = FormField(InteractiveMetricMaintainabilityForm, label="Maintainability", description="What is the likelihoood that the software can be maintained and developed over a period of time?")
+        ff_p = FormField(InteractiveMetricPortabilityForm, label="Portability", description="What is the capacity for using the software in a different area, field or environment?")
         submit = SubmitField('Next')
 
     # Get an instance
@@ -118,11 +129,13 @@ def metrics_interactive():
         run_interactive_metrics(interactive_metric_run_form.usability.data, metrics, sw)
         run_interactive_metrics(interactive_metric_run_form.maintainability.data, metrics, sw)
         run_interactive_metrics(interactive_metric_run_form.portability.data, metrics, sw)
-
         # Forward to automater metrics
         return redirect(url_for('metrics_automated'))
 
-    return render_template('metrics_interactive.html', form=interactive_metric_run_form, software=sw)
+    # Default action
+    return render_template('metrics_interactive.html',
+                           form=interactive_metric_run_form,
+                           software=sw)
 
 
 # Automated Metrics Selection and Execution

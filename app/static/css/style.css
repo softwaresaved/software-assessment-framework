@@ -1,0 +1,32 @@
+/** Prevent range controls taking up the whole line breaking labels **/
+.importance {
+    padding: 3px 5px 5px 5px;
+    border: 1px;
+    border-color: rgb(188, 232, 241);
+    border-style: solid;
+    border-radius: 4px;
+    background-color: white;
+}
+
+
+
+input[type="range"] {
+    width:100px;
+    display:inline;
+    padding: 5px;
+    vertical-align: middle;
+}
+.metric-question {
+    padding-left: 15px;
+}
+
+ul {
+    list-style-type: none;
+    padding-left: 0px;
+}
+
+ul li label {
+    display: inline;
+}
+
+
