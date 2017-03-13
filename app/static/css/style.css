@@ -6,9 +6,8 @@
     border-style: solid;
     border-radius: 4px;
     background-color: white;
+    font-size: 9px;
 }
-
-
 
 input[type="range"] {
     width:100px;
@@ -16,6 +15,7 @@ input[type="range"] {
     padding: 5px;
     vertical-align: middle;
 }
+
 .metric-question {
     padding-left: 15px;
 }
