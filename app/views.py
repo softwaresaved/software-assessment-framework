@@ -68,11 +68,12 @@ def metrics_interactive():
     sw = Software.query.filter_by(id=session['sw_id']).first()
     # Load interactive metrics
     app.logger.info("Finding Interactive metrics")
-    # FixMe - implement a category based filter for plugin loading to avoid repeatition below
+    # FixMe - implement a category based filter for plugin loading to avoid repetition below
     metrics = plugins.metric.load()
 
-    # In order to be able to separate, and label the categories, we need to create individual sub-forms
-    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it
+    # In order to be able to separate, and label the categories, we need to create *individual* sub-form classes
+    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it.
+    # This feels *wrong* and *bad*, but it has to be done this way.
     class InteractiveMetricAvailabilityForm(FlaskForm):
         importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
@@ -85,7 +86,7 @@ def metrics_interactive():
     class InteractiveMetricPortabilityForm(FlaskForm):
         importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
-    # Add metrics to their appropriate sub-forms
+    # Add metrics to their appropriate sub-forms classes (not instances)
     # FixMe - Because the choices come from a dictionary, the sort order is random
     for metric in metrics:
         if metric.INTERACTIVE:
@@ -111,7 +112,7 @@ def metrics_interactive():
                 setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
-    # Build the top-level form with the sub-forms
+    # Build the top-level form with the instances of the now populated sub-form classes.
     class InteractiveMetricRunForm(FlaskForm):
         ff_a = FormField(InteractiveMetricAvailabilityForm, label="Availability", description="Can a user find the software (discovery) and can they obtain the software (access)?")
         ff_u = FormField(InteractiveMetricUsabilityForm, label="Usability", description="Can a user understand the operation of the software, such they can use it, integrate it with other software and extend or modify it?")
@@ -119,16 +120,17 @@ def metrics_interactive():
         ff_p = FormField(InteractiveMetricPortabilityForm, label="Portability", description="What is the capacity for using the software in a different area, field or environment?")
         submit = SubmitField('Next')
 
-    # Get an instance
+    # Get an instance of the top leve form
     interactive_metric_run_form = InteractiveMetricRunForm()
 
     # Deal with submission
-    if interactive_metric_run_form.validate_on_submit():
+    # FixMe - Find out why validation fails
+    if interactive_metric_run_form.is_submitted():
         # Run the metrics
-        run_interactive_metrics(interactive_metric_run_form.availability.data, metrics, sw)
-        run_interactive_metrics(interactive_metric_run_form.usability.data, metrics, sw)
-        run_interactive_metrics(interactive_metric_run_form.maintainability.data, metrics, sw)
-        run_interactive_metrics(interactive_metric_run_form.portability.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_u.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_a.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_m.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_p.data, metrics, sw)
         # Forward to automater metrics
         return redirect(url_for('metrics_automated'))
 
@@ -213,10 +215,9 @@ def metrics_results(software_id):
 
     return render_template('metrics_results.html',
                            software=sw,
-                           availability_scores=availability_scores,
-                           usability_scores=usability_scores,
-                           maintainability_scores=maintainability_scores,
-                           portability_scores=portability_scores)
+                           scores={"Availability": availability_scores, "Usability": usability_scores,
+                                   "Maintainability": maintainability_scores, "Portability": portability_scores}
+                           )
 
 
 def run_interactive_metrics(form_data, all_metrics, sw):
@@ -237,12 +238,10 @@ def run_interactive_metrics(form_data, all_metrics, sw):
                 metric.run(software=sw, form_data=value)
                 app.logger.info(metric.get_score())
                 app.logger.info(metric.get_feedback())
-                score = Score(software_id=sw.id,
-                              category=metric.CATEGORY,
-                              short_description=metric.SHORT_DESCRIPTION,
-                              long_description=metric.LONG_DESCRIPTION,
-                              value=metric.get_score(),
-                              feedback=metric.get_feedback())
+                score = Score(software_id=sw.id, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
+                              long_description=metric.LONG_DESCRIPTION, value=metric.get_score(),
+                              feedback=metric.get_feedback(), category_importance=form_data['importance'],
+                              metric_importance=form_data['IMPORTANCE_'+metric_id])
                 db.session.add(score)
                 db.session.commit()
                 score_ids.append(score.id)
@@ -251,7 +250,8 @@ def run_interactive_metrics(form_data, all_metrics, sw):
 
 def run_automated_metrics(form_data, metrics, sw, repos_helper):
     """
-    Match the selected boxes from the form submission to metrics and run.  Save the scores and feedback
+    Match the selected boxes from the form submission to metrics and run.
+    Save the scores and feedback
     :param form_data: Metrics to run (List of md5 of the description)
     :param metrics: List of the available Metrics
     :param sw: The Software object being tested
@@ -266,11 +266,8 @@ def run_automated_metrics(form_data, metrics, sw, repos_helper):
                 metric.run(software=sw, helper=repos_helper)
                 app.logger.info(metric.get_score())
                 app.logger.info(metric.get_feedback())
-                score = Score(software_id=sw.id,
-                              category=metric.CATEGORY,
-                              short_description=metric.SHORT_DESCRIPTION,
-                              long_description=metric.LONG_DESCRIPTION,
-                              value=metric.get_score(),
+                score = Score(software_id=sw.id, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
+                              long_description=metric.LONG_DESCRIPTION, value=metric.get_score(),
                               feedback=metric.get_feedback())
                 db.session.add(score)
                 db.session.commit()

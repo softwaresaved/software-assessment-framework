@@ -1,70 +1,35 @@
 {% extends "base.html" %}
 
-{% block page_content %}
-    <div class="page-header">
-        <h2>Metrics Scores</h2>
-        <h3>{{ software.name }}</h3>
-    </div>
+{% macro render_category(cat_name, cat_scores) %}
 
-    {% if availability_scores.all()|length > 0 %}
-        <h3><label>Availability</label></h3>
+    {% if cat_scores.all()|length > 0 %}
+        <h3><label>{{ cat_name }}</label></h3>
+        <h5>Category Importance: {{ cat_scores.first().category_importance }}</h5>
         <ul>
-            {% for score in availability_scores %}
+            {% for score in cat_scores %}
                 <li>
                     <div>
                         <h4>{{ score.short_description }}</h4>
                         <div>Score: {{ score.value }}</div>
                         <div>Feedback: {{ score.feedback }}</div>
+                        <div>Metric Importance: {{ score.metric_importance }}</div>
                     </div>
                 </li>
             {%  endfor %}
         </ul>
     {% endif %}
 
-    {% if usability_scores.all()|length > 0 %}
-    <h3><label>Usability</label></h3>
-    <ul>
-        {% for score in usability_scores %}
-            <li>
-                <div>
-                    <h4>{{ score.short_description }}</h4>
-                    <div>Score: {{ score.value }}</div>
-                    <div>Feedback: {{ score.feedback }}</div>
-                </div>
-            </li>
-        {%  endfor %}
-    </ul>
-    {% endif %}
+{% endmacro %}
 
-    {% if maintainability_scores.all()|length > 0 %}
-    <h3><label>Maintainability</label></h3>
-    <ul>
-        {% for score in maintainability_scores %}
-            <li>
-                <div>
-                    <h4>{{ score.short_description }}</h4>
-                    <div>Score: {{ score.value }}</div>
-                    <div>Feedback: {{ score.feedback }}</div>
-                </div>
-            </li>
-        {%  endfor %}
-    </ul>
-    {% endif %}
+{% block page_content %}
+    <div class="page-header">
+        <h2>Metrics Scores</h2>
+        <h3>{{ software.name }}</h3>
+    </div>
 
-    {% if portability_scores.all()|length > 0 %}
-    <h3><label>Portability</label></h3>
-    <ul>
-        {% for score in portability_scores %}
-            <li>
-                <div>
-                    <h4>{{ score.short_description }}</h4>
-                    <div>Score: {{ score.value }}</div>
-                    <div>Feedback: {{ score.feedback }}</div>
-                </div>
-            </li>
-        {%  endfor %}
-    </ul>
-    {% endif %}
+    {% for cat_name, cat_scores in scores.items() %}
+        {{ render_category(cat_name, cat_scores) }}
+    {% endfor %}
 
 
 {% endblock %}
