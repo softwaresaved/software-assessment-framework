@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
-from wtforms import RadioField, SubmitField, FormField
+from wtforms import RadioField, SubmitField, FormField, BooleanField
 from wtforms.fields.html5 import IntegerRangeField
 from wtforms.validators import DataRequired
 from app.main.forms import SoftwareSubmitForm, MultiCheckboxField
@@ -125,7 +125,6 @@ def metrics_interactive():
     interactive_metric_run_form = InteractiveMetricRunForm()
 
     # Deal with submission
-    # FixMe - Find out why validation fails
     if interactive_metric_run_form.validate_on_submit():
         # Run the metrics
         run_interactive_metrics(interactive_metric_run_form.ff_u.data, metrics, sw)
@@ -138,8 +137,9 @@ def metrics_interactive():
     # Default action
 
     flash_errors(interactive_metric_run_form)
-    return render_template('metrics_interactive.html',
+    return render_template('metrics_select.html', page_title="Self Assessment",
                            form=interactive_metric_run_form,
+                           form_target="metrics_interactive",
                            software=sw)
 
 
@@ -154,54 +154,87 @@ def metrics_automated():
     app.logger.info("Finding automated metrics")
     metrics = plugins.metric.load()
 
-    # Construct the form
-    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it
-    class MetricRunForm(FlaskForm):
-        pass
+    # In order to be able to separate, and label the categories, we need to create *individual* sub-form classes
+    # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it.
+    # This feels *wrong* and *bad*, but it has to be done this way.
+    class AutoMetricAvailabilityForm(FlaskForm):
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
-    metrics_availability = []
-    metrics_usability = []
-    metrics_maintainability = []
-    metrics_portability = []
+    class AutoMetricUsabilityForm(FlaskForm):
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
 
+    class AutoMetricMaintainabilityForm(FlaskForm):
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+
+    class AutoMetricPortabilityForm(FlaskForm):
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+
+    # Add metrics to their appropriate sub-forms classes (not instances)
+    # FixMe - Because the choices come from a dictionary, the sort order is random
     for metric in metrics:
         if metric.INTERACTIVE:
             continue
         metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
-        if metric.CATEGORY == 'AVAILABILITY':
-            metrics_availability.append((metric_key, metric.SHORT_DESCRIPTION))
-        elif metric.CATEGORY == 'USABILITY':
-            metrics_usability.append((metric_key, metric.SHORT_DESCRIPTION))
-        elif metric.CATEGORY == 'MAINTAINABILITY':
-            metrics_maintainability.append((metric_key, metric.SHORT_DESCRIPTION))
-        elif metric.CATEGORY == 'PORTABILITY':
-            metrics_portability.append((metric_key, metric.SHORT_DESCRIPTION))
+        if metric.CATEGORY == "AVAILABILITY":
+            setattr(AutoMetricAvailabilityForm, metric_key,
+                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+            setattr(AutoMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
+                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
-    setattr(MetricRunForm, 'metrics_availability', MultiCheckboxField('Availability', choices=metrics_availability))
-    setattr(MetricRunForm, 'metrics_usability', MultiCheckboxField('Usability', choices=metrics_usability))
-    setattr(MetricRunForm, 'metrics_maintainability', MultiCheckboxField('Maintainability', choices=metrics_maintainability))
-    setattr(MetricRunForm, 'metrics_portability', MultiCheckboxField('Portability', choices=metrics_portability))
-    setattr(MetricRunForm, 'submit', SubmitField('Run Metrics'))
+        if metric.CATEGORY == "USABILITY":
+            setattr(AutoMetricUsabilityForm, metric_key,
+                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+            setattr(AutoMetricUsabilityForm, "IMPORTANCE_" + metric_key,
+                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
-    metric_run_form = MetricRunForm()
+        if metric.CATEGORY == "MAINTAINABILITY":
+            setattr(AutoMetricMaintainabilityForm, metric_key,
+                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+            setattr(AutoMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
+                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+
+        if metric.CATEGORY == "PORTABILITY":
+            setattr(AutoMetricPortabilityForm, metric_key,
+                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+            setattr(AutoMetricPortabilityForm, "IMPORTANCE_" + metric_key,
+                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+
+        # Build the top-level form with the instances of the now populated sub-form classes.
+        class AutomatedMetricRunForm(FlaskForm):
+            ff_a = FormField(AutoMetricAvailabilityForm, label="Availability",
+                             description="Can a user find the software (discovery) and can they obtain the software (access)?")
+            ff_u = FormField(AutoMetricUsabilityForm, label="Usability",
+                             description="Can a user understand the operation of the software, such they can use it, integrate it with other software and extend or modify it?")
+            ff_m = FormField(AutoMetricMaintainabilityForm, label="Maintainability",
+                             description="What is the likelihoood that the software can be maintained and developed over a period of time?")
+            ff_p = FormField(AutoMetricPortabilityForm, label="Portability",
+                             description="What is the capacity for using the software in a different area, field or environment?")
+            submit = SubmitField('Next')
+
+        # Get an instance of the top leve form
+        automated_metric_run_form = AutomatedMetricRunForm()
 
     # Deal with submission
-    if metric_run_form.validate_on_submit():
+    if automated_metric_run_form.validate_on_submit():
         # Load the RepositoryHelper again
         if sw.url and sw.url != "".strip():
             repos_helper = find_repository_helper(sw.url)
             repos_helper.login()
 
         # Run the appropriate metrics
-        run_automated_metrics(metric_run_form.metrics_usability.data, metrics, sw, repos_helper)
-        run_automated_metrics(metric_run_form.metrics_availability.data, metrics, sw, repos_helper)
-        run_automated_metrics(metric_run_form.metrics_maintainability.data, metrics, sw, repos_helper)
-        run_automated_metrics(metric_run_form.metrics_portability.data, metrics, sw, repos_helper)
+        run_automated_metrics(automated_metric_run_form.ff_u.data, metrics, sw, repos_helper)
+        run_automated_metrics(automated_metric_run_form.ff_a.data, metrics, sw, repos_helper)
+        run_automated_metrics(automated_metric_run_form.ff_m.data, metrics, sw, repos_helper)
+        run_automated_metrics(automated_metric_run_form.ff_p.data, metrics, sw, repos_helper)
 
         # Forward to results display
         return redirect(url_for('metrics_results', software_id=sw.id))
 
-    return render_template('metrics_automated.html', form=metric_run_form, software=sw)
+    flash_errors(automated_metric_run_form)
+    return render_template('metrics_select.html', page_title="Automated Assessment",
+                           form=automated_metric_run_form,
+                           form_target="metrics_automated",
+                           software=sw)
 
 
 # Metrics results

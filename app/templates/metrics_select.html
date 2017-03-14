@@ -21,12 +21,12 @@
             <hr/>
             <ol class="metric-question">
             {% for field in metric_subform %}
-                {% if field.type == "RadioField" %}
+                {% if field.type == "BooleanField" or field.type == "RadioField"%}
                     {% set importance_id = "IMPORTANCE_"+field.id[5:49] %}
-                    <li>
-                        <div class="row">
+                    <div class="row">
+                        <li>
                             <div class="col-sm-7">
-                             {{ field.label(_class="inline-radio-label") }} {{ field(_class="inline-radio-label") }}
+                             {{ field.label}} {{ field }}
                             </div>
                             <div class="col-sm-5" title="Move the slider to indicate the importance of this to you">
                                 <div class="importance pull-right">
@@ -35,8 +35,8 @@
                                     <span class="label label-success">Very important</span>
                                 </div>
                             </div>
-                        </div>
-                    </li>
+                        </li>
+                    </div>
                  {% endif %}
             {% endfor %}
             </ol>
@@ -48,11 +48,11 @@
 {% block page_content %}
     <div class="container">
         <div class="page-header">
-            <h2>Self Assessment</h2>
+            <h2>{{ page_title }}</h2>
             <h3>{{ software.name }}</h3>
         </div>
 
-        <form action="{{ url_for('metrics_interactive') }}" method="POST">
+        <form action="{{ url_for(form_target) }}" method="POST">
             {% for f in form %}
                 {% if f.type == "FormField" %}
                     {{ metric_block(f) }}
