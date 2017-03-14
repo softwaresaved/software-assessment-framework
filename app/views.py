@@ -2,6 +2,7 @@ from flask import render_template, redirect, url_for, session, flash
 from flask_wtf import FlaskForm
 from wtforms import RadioField, SubmitField, FormField
 from wtforms.fields.html5 import IntegerRangeField
+from wtforms.validators import DataRequired
 from app.main.forms import SoftwareSubmitForm, MultiCheckboxField
 from app.models import db, Software, Score
 from app import app
@@ -93,22 +94,22 @@ def metrics_interactive():
             metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
             if metric.CATEGORY == "AVAILABILITY":
                 setattr(InteractiveMetricAvailabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "USABILITY":
                 setattr(InteractiveMetricUsabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricUsabilityForm, "IMPORTANCE_"+metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "MAINTAINABILITY":
                 setattr(InteractiveMetricMaintainabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "PORTABILITY":
                 setattr(InteractiveMetricPortabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items()))
+                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
@@ -125,7 +126,7 @@ def metrics_interactive():
 
     # Deal with submission
     # FixMe - Find out why validation fails
-    if interactive_metric_run_form.is_submitted():
+    if interactive_metric_run_form.validate_on_submit():
         # Run the metrics
         run_interactive_metrics(interactive_metric_run_form.ff_u.data, metrics, sw)
         run_interactive_metrics(interactive_metric_run_form.ff_a.data, metrics, sw)
@@ -135,6 +136,8 @@ def metrics_interactive():
         return redirect(url_for('metrics_automated'))
 
     # Default action
+
+    flash_errors(interactive_metric_run_form)
     return render_template('metrics_interactive.html',
                            form=interactive_metric_run_form,
                            software=sw)
@@ -198,7 +201,7 @@ def metrics_automated():
         # Forward to results display
         return redirect(url_for('metrics_results', software_id=sw.id))
 
-    return render_template('metrics_selection.html', form=metric_run_form, software=sw)
+    return render_template('metrics_automated.html', form=metric_run_form, software=sw)
 
 
 # Metrics results
@@ -273,3 +276,11 @@ def run_automated_metrics(form_data, metrics, sw, repos_helper):
                 db.session.commit()
                 score_ids.append(score.id)
     return score_ids
+
+
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Response required in %s " % (
+                getattr(form, field).label.text
+            ))
