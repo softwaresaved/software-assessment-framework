@@ -14,14 +14,3 @@ class SoftwareSubmitForm(FlaskForm):
     version = StringField('Version')
     url = StringField('Repository URL', validators=[DataRequired()])
     submit = SubmitField('Submit')
-
-
-class MultiCheckboxField(SelectMultipleField):
-    """
-    A multiple-select, except displays a list of checkboxes.
-
-    Iterating the field will produce subfields, allowing custom rendering of
-    the enclosed checkbox fields.
-    """
-    widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()

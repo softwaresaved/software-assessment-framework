@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import RadioField, SubmitField, FormField, BooleanField
 from wtforms.fields.html5 import IntegerRangeField
 from wtforms.validators import DataRequired
-from app.main.forms import SoftwareSubmitForm, MultiCheckboxField
+from app.main.forms import SoftwareSubmitForm
 from app.models import db, Software, Score
 from app import app
 import hashlib
@@ -177,25 +177,25 @@ def metrics_automated():
         metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
         if metric.CATEGORY == "AVAILABILITY":
             setattr(AutoMetricAvailabilityForm, metric_key,
-                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+                    BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "USABILITY":
             setattr(AutoMetricUsabilityForm, metric_key,
-                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+                    BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricUsabilityForm, "IMPORTANCE_" + metric_key,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "MAINTAINABILITY":
             setattr(AutoMetricMaintainabilityForm, metric_key,
-                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+                    BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "PORTABILITY":
             setattr(AutoMetricPortabilityForm, metric_key,
-                    BooleanField(label=metric.SHORT_DESCRIPTION, validators=[DataRequired()]))
+                    BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricPortabilityForm, "IMPORTANCE_" + metric_key,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
