@@ -17,7 +17,7 @@ input[type="range"] {
 }
 
 .metric-question {
-    padding-left: 15px;
+    font-weight: normal;
 }
 
 ul {
@@ -27,6 +27,7 @@ ul {
 
 ul li label {
     display: inline;
+    font-weight: normal;
 }
 
 

@@ -19,14 +19,14 @@
         <div class="panel-body">
             <h4>{{ metric_subform.description }}</h4>
             <hr/>
-            <ol class="metric-question">
+            <ol>
             {% for field in metric_subform %}
                 {% if field.type == "BooleanField" or field.type == "RadioField"%}
                     {% set importance_id = "IMPORTANCE_"+field.id[5:49] %}
                     <div class="row">
                         <li>
                             <div class="col-sm-7">
-                             {{ field.label}} {{ field }}
+                             {{ field.label(class="metric-question")}} {{ field(class="metric-question") }}
                             </div>
                             <div class="col-sm-5" title="Move the slider to indicate the importance of this to you">
                                 <div class="importance pull-right">
@@ -58,8 +58,14 @@
                     {{ metric_block(f) }}
                 {% endif %}
             {% endfor %}
-            <div>{{ form.submit(class_="btn btn-default") }}</div>
+            <div>{{ form.submit(class_="btn btn-default loading", onclick="loading()") }}</div>
         </form>
+        <script type="text/javascript">// <![CDATA[
+        function loading(){
+            $(".loading").css('background', 'url(/static/images/ajax-loader.gif) no-repeat center');
+        }
+        // ]]></script>
+
     </div>
 
 {% endblock %}
