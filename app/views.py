@@ -140,6 +140,7 @@ def metrics_interactive():
     return render_template('metrics_select.html', page_title="Self Assessment",
                            form=interactive_metric_run_form,
                            form_target="metrics_interactive",
+                           preamble="Answer the following questions about your software, indicating their importance to you.",
                            software=sw)
 
 
@@ -234,6 +235,7 @@ def metrics_automated():
     return render_template('metrics_select.html', page_title="Automated Assessment",
                            form=automated_metric_run_form,
                            form_target="metrics_automated",
+                           preamble="Select from the following automated metrics to run against your repository, indicating their importance to you.",
                            software=sw)
 
 

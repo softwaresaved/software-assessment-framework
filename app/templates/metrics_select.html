@@ -17,16 +17,21 @@
             </div>
         </div>
         <div class="panel-body">
-            <h4>{{ metric_subform.description }}</h4>
+            <h5>{{ metric_subform.description }}</h5>
             <hr/>
-            <ol>
+            {% set question_index = [] %}
             {% for field in metric_subform %}
-                {% if field.type == "BooleanField" or field.type == "RadioField"%}
+                {% if field.type == "BooleanField" or field.type == "RadioField" %}
+                    {% set __ = question_index.append(1) %}
                     {% set importance_id = "IMPORTANCE_"+field.id[5:49] %}
-                    <div class="row">
-                        <li>
-                            <div class="col-sm-7">
-                             {{ field.label(class="metric-question")}} {{ field(class="metric-question") }}
+
+                        <div class="row">
+                            <div class="col-sm-7 metric-row">{{ question_index|length }}.
+                            {% if field.type == "RadioField" %}
+                                {{ field.label(class="metric-question")}}{{ field(class="metric-question") }}
+                            {% else %}
+                                {{ field(class="metric-question") }} {{ field.label(class="metric-question") }}
+                            {% endif %}
                             </div>
                             <div class="col-sm-5" title="Move the slider to indicate the importance of this to you">
                                 <div class="importance pull-right">
@@ -35,11 +40,11 @@
                                     <span class="label label-success">Very important</span>
                                 </div>
                             </div>
-                        </li>
-                    </div>
+                        </div>
+
                  {% endif %}
             {% endfor %}
-            </ol>
+
         </div>
     </div>
 {% endmacro %}
@@ -52,20 +57,22 @@
             <h3>{{ software.name }}</h3>
         </div>
 
-        <form action="{{ url_for(form_target) }}" method="POST">
-            {% for f in form %}
-                {% if f.type == "FormField" %}
-                    {{ metric_block(f) }}
-                {% endif %}
-            {% endfor %}
-            <div>{{ form.submit(class_="btn btn-default loading", onclick="loading()") }}</div>
-        </form>
-        <script type="text/javascript">// <![CDATA[
-        function loading(){
-            $(".loading").css('background', 'url(/static/images/ajax-loader.gif) no-repeat center');
-        }
-        // ]]></script>
-
+        <h4 class="preamble">{{ preamble }}</h4>
+        <div>
+            <form action="{{ url_for(form_target) }}" method="POST">
+                {% for f in form %}
+                    {% if f.type == "FormField" %}
+                        {{ metric_block(f) }}
+                    {% endif %}
+                {% endfor %}
+                <div>{{ form.submit(class_="btn btn-default loading", onclick="loading()") }}</div>
+            </form>
+            <script type="text/javascript">// <![CDATA[
+            function loading(){
+                $(".loading").css('background', 'url(/static/images/ajax-loader.gif) no-repeat center');
+            }
+            // ]]></script>
+        </div>
     </div>
 
 {% endblock %}
