@@ -229,7 +229,7 @@ def metrics_automated():
         run_automated_metrics(automated_metric_run_form.ff_p.data, metrics, sw, repos_helper)
 
         # Forward to results display
-        return redirect(url_for('metrics_results', software_id=sw.id))
+        return redirect(url_for('metrics_scores', software_id=sw.id))
 
     flash_errors(automated_metric_run_form)
     return render_template('metrics_select.html', page_title="Automated Assessment",
@@ -240,8 +240,8 @@ def metrics_automated():
 
 
 # Metrics results
-@app.route('/metrics/results/<software_id>', methods=['GET'])
-def metrics_results(software_id):
+@app.route('/metrics/scores/<software_id>', methods=['GET'])
+def metrics_scores(software_id):
     # Load the Software
     sw = Software.query.filter_by(id=software_id).first()
 
@@ -251,7 +251,7 @@ def metrics_results(software_id):
     maintainability_scores = Score.query.filter_by(software_id=software_id, category="MAINTAINABILITY")
     portability_scores = Score.query.filter_by(software_id=software_id, category="PORTABILITY")
 
-    return render_template('metrics_results.html',
+    return render_template('metrics_scores.html',
                            software=sw,
                            scores={"Availability": availability_scores, "Usability": usability_scores,
                                    "Maintainability": maintainability_scores, "Portability": portability_scores}
