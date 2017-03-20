@@ -14,8 +14,8 @@ class DocumentationUserMetric(metric.Metric):
 
     INTERACTIVE = True
     CATEGORY = "USABILITY"
-    SHORT_DESCRIPTION = "Do you provide end-user documentation?  If so, how extensive is it? "
-    LONG_DESCRIPTION = ""
+    SHORT_DESCRIPTION = "End user documentation"
+    LONG_DESCRIPTION = "Do you provide end-user documentation?  If so, how extensive is it?"
 
     def run(self, software, helper=None, form_data=None):
         """

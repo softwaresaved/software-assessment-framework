@@ -94,22 +94,22 @@ def metrics_interactive():
             metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
             if metric.CATEGORY == "AVAILABILITY":
                 setattr(InteractiveMetricAvailabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
+                        RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "USABILITY":
                 setattr(InteractiveMetricUsabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
+                        RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricUsabilityForm, "IMPORTANCE_"+metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "MAINTAINABILITY":
                 setattr(InteractiveMetricMaintainabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
+                        RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "PORTABILITY":
                 setattr(InteractiveMetricPortabilityForm, metric_key,
-                        RadioField(label=metric.SHORT_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
+                        RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric_key,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 

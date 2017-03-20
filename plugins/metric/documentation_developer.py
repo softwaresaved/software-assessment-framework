@@ -14,8 +14,8 @@ class DocumentationDeveloperMetric(metric.Metric):
 
     INTERACTIVE = True
     CATEGORY = "MAINTAINABILITY"
-    SHORT_DESCRIPTION = "Do you provide documentation for developers wanting to contribute to, extend or fix bugs in your project?"
-    LONG_DESCRIPTION = ""
+    SHORT_DESCRIPTION = "Developer Documentation?"
+    LONG_DESCRIPTION = "Do you provide documentation for developers wanting to contribute to, extend or fix bugs in your project?"
 
     def run(self, software, helper=None, form_data=None):
         """
