@@ -34,6 +34,7 @@ class Score(db.Model):
     __tablename__ = 'score'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     software_id = db.Column(db.Integer, db.ForeignKey('software.id'))
+    interactive = db.Column(db.Boolean)
     category = db.Column(db.Text)
     short_description = db.Column(db.Text)
     long_description = db.Column(db.Text)
@@ -41,9 +42,11 @@ class Score(db.Model):
     feedback = db.Column(db.Text)
     category_importance = db.Column(db.Integer)
     metric_importance = db.Column(db.Integer)
+    updated = db.Column(db.TIMESTAMP, server_default=db.func.now(), onupdate=db.func.current_timestamp())
 
-    def __init__(self, software_id, category, short_description, long_description, value, feedback, category_importance=1, metric_importance=1):
+    def __init__(self, software_id, interactive, category, short_description, long_description, value, feedback, category_importance=1, metric_importance=1):
         self.software_id = software_id
+        self.interactive = interactive
         self.category = category
         self.short_description = short_description
         self.long_description = long_description
@@ -51,6 +54,7 @@ class Score(db.Model):
         self.feedback = feedback
         self.category_importance = category_importance
         self.metric_importance = metric_importance
+
 
 # Create database if required
 if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI']):

@@ -276,7 +276,7 @@ def run_interactive_metrics(form_data, all_metrics, sw):
                 metric.run(software=sw, form_data=value)
                 app.logger.info(metric.get_score())
                 app.logger.info(metric.get_feedback())
-                score = Score(software_id=sw.id, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
+                score = Score(software_id=sw.id, interactive=True, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
                               long_description=metric.LONG_DESCRIPTION, value=metric.get_score(),
                               feedback=metric.get_feedback(), category_importance=form_data['importance'],
                               metric_importance=form_data['IMPORTANCE_'+metric_id])
@@ -304,7 +304,7 @@ def run_automated_metrics(form_data, metrics, sw, repos_helper):
                 metric.run(software=sw, helper=repos_helper)
                 app.logger.info(metric.get_score())
                 app.logger.info(metric.get_feedback())
-                score = Score(software_id=sw.id, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
+                score = Score(software_id=sw.id, interactive=False, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
                               long_description=metric.LONG_DESCRIPTION, value=metric.get_score(),
                               feedback=metric.get_feedback())
                 db.session.add(score)
