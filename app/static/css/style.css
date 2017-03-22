@@ -38,6 +38,11 @@
     margin: 50px 0px 20px 0px;
 }
 
+.header-image {
+    width: 100%;
+    margin: -20px 0px 20px 0px;
+
+}
 /** Prevent range controls taking up the whole line breaking labels **/
 .importance {
     padding: 0px 2px 0px 2px;
