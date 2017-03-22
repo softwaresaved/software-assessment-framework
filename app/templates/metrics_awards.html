@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h2>Assessment Results</h2>
+        <h3>{{ software.name }}</h3>
+    </div>
+
+    <h4 class="preamble">Based on our metrics and their relative importances as chosen by you.</h4>
+    <div>Assessed on: {{ assessment_date.strftime('%d-%m-%Y') }}</div>
+    <h1 class="award-level">{{ award }} Award</h1>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+            <div class="col-sm-1 cup-ruler"></div>
+        </div>
+        <!-- Arrow indicating award level -->
+        <div class="row">
+            <div class="col-sm-3">
+               {% if award == "Bronze" %}
+                   <span class="glyphicon glyphicon-arrow-down cup-arrow"></span>
+               {% endif %}
+            </div>
+            <div class="col-sm-3">
+                {% if award == "Silver" %}
+                   <span class="glyphicon glyphicon-arrow-down cup-arrow"></span>
+                {% endif %}
+            </div>
+            <div class="col-sm-3">
+                {% if award == "Gold" %}
+                   <span class="glyphicon glyphicon-arrow-down cup-arrow"></span>
+                {% endif %}
+            </div>
+            <div class="col-sm-3">
+                {% if award == "Platinum" %}
+                   <span class="glyphicon glyphicon-arrow-down cup-arrow"></span>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Cup images -->
+        <div class="row">
+            <div class="col-sm-3">
+                <img class="cup {% if award != "Bronze" %} cup-inactive {% endif %}" src="{{ url_for('static', filename='images/bronze-cup.png') }}">
+            </div>
+            <div class="col-sm-3">
+                <img class="cup {% if award != "Silver" %} cup-inactive {% endif %}" src="{{ url_for('static', filename='images/silver-cup.png') }}">
+            </div>
+            <div class="col-sm-3">
+                <img class="cup {% if award != "Gold" %} cup-inactive {% endif %}" src="{{ url_for('static', filename='images/gold-cup.png') }}">
+            </div>
+            <div class="col-sm-3">
+                <img class="cup {% if award != "Platinum" %} cup-inactive {% endif %}" src="{{ url_for('static', filename='images/platinum-cup.png') }}">
+            </div>
+        </div>
+        <!-- Metrics -->
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="metrics-award-text
+                 {% if award == "Bronze" or award == "Silver" or award == "Gold" or award == "Platinum" %}
+                 metrics-award-text-passed
+                 {% endif %}
+                 ">
+                    <span class="glyphicon
+                    {% if award == "Bronze" or award == "Silver" or award == "Gold" or award == "Platinum" %}
+                    glyphicon-ok-circle
+                    {% else %}
+                    glyphicon-remove-circle
+                    {%  endif %}
+                    "></span>
+                    Has a License file?
+                </div>
+                <div class="metrics-award-text
+                 {% if award == "Bronze" or award == "Silver" or award == "Gold" or award == "Platinum" %}
+                 metrics-award-text-passed
+                 {% endif %}
+                 ">
+                    <span class="glyphicon
+                    {% if award == "Bronze" or award == "Silver" or award == "Gold" or award == "Platinum" %}
+                    glyphicon-ok-circle
+                    {% else %}
+                    glyphicon-remove-circle
+                    {%  endif %}
+                    "></span>
+                    Has a README file?
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="metrics-award-text
+                 {% if award == "Silver" or award == "Gold" or award == "Platinum" %}
+                 metrics-award-text-passed
+                 {% endif %}
+                 ">
+                    <span class="glyphicon
+                    {% if award == "Silver" or award == "Gold" or award == "Platinum" %}
+                    glyphicon-ok-circle
+                    {% else %}
+                    glyphicon-remove-circle
+                    {%  endif %}
+                    "></span>
+                    No. of committers is stable or growing?
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

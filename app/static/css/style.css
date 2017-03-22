@@ -1,3 +1,30 @@
+.cup {
+    height: 192px;
+    width: 192px;
+    display: block;
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+}
+
+.cup-arrow {
+    display: block;
+    font-size: 50px;
+    text-align: center;
+}
+
+.cup-inactive {
+    opacity: 0.3;
+}
+
+.cup-ruler {
+    border-top: 2px solid;
+    border-left: 2px solid;
+    height: 10px;
+    margin-bottom: 10px;
+}
+
 /** Prevent range controls taking up the whole line breaking labels **/
 .importance {
     padding: 0px 2px 0px 2px;
@@ -34,6 +61,32 @@ input[type="checkbox"] {
     display: inline;
 }
 
+.metrics-award-text {
+    margin: 10px 5px 5px 5px;
+    color: gray;
+    text-decoration: line-through;
+    font-size: 1.2em;
+}
+
+.metrics-award-text-passed {
+    color: initial ;
+    text-decoration: none;
+}
+
+h2, h3, h4, h5 {
+    font-weight: bold;
+}
+
+h4.preamble {
+    margin-bottom: 20px;
+}
+
+h1.award-level {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: 4.0em;
+}
+
 ul {
     list-style-type: none;
     padding-left: 0px;
@@ -44,10 +97,3 @@ ul li label {
     font-weight: normal;
 }
 
-h2, h3, h4, h5 {
-    font-weight: bold;
-}
-
-h4.preamble {
-    margin-bottom: 20px;
-}

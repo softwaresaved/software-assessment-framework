@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, flash
+from flask import render_template, redirect, url_for, session, flash, abort
 from flask_wtf import FlaskForm
 from wtforms import RadioField, SubmitField, FormField, BooleanField
 from wtforms.fields.html5 import IntegerRangeField
@@ -212,7 +212,7 @@ def metrics_automated():
                              description="What is the capacity for using the software in a different area, field or environment?")
             submit = SubmitField('Next')
 
-        # Get an instance of the top leve form
+        # Get an instance of the top level form
         automated_metric_run_form = AutomatedMetricRunForm()
 
     # Deal with submission
@@ -239,7 +239,7 @@ def metrics_automated():
                            software=sw)
 
 
-# Metrics results
+# Metrics scores (raw scores - post submission)
 @app.route('/metrics/scores/<software_id>', methods=['GET'])
 def metrics_scores(software_id):
     # Load the Software
@@ -256,6 +256,84 @@ def metrics_scores(software_id):
                            scores={"Availability": availability_scores, "Usability": usability_scores,
                                    "Maintainability": maintainability_scores, "Portability": portability_scores}
                            )
+
+
+@app.route('/metrics/awards/<software_id>', methods=['GET'])
+def metrics_awards(software_id):
+    # Load the Software
+    sw = Software.query.filter_by(id=software_id).first()
+
+    if sw is None:
+        # We don't recognise that id
+        abort(404)
+
+    award = None
+    if has_bronze_award(software_id):
+        award = "Bronze"
+        app.logger.info("Passed Bronze")
+        if has_silver_award(software_id):
+            award = "Silver"
+            app.logger.info("Passed Silver")
+    else:
+        app.logger.info("Failed Bronze")
+
+    # Find the most recent assessment
+    assessment_date = Score.query.filter_by(software_id=software_id).order_by(Score.updated).first().updated
+
+    return render_template('metrics_awards.html',
+                           software=sw,
+                           award=award,
+                           assessment_date=assessment_date)
+
+
+def has_bronze_award(software_id):
+    """
+    Ascertain if the piece of software had passed metrics to achieve a bronze award
+    :param software_id:
+    :return: True if passed, otherwise false
+    """
+    # FixMe - this is not elegant and depends on lots of assumws knowledge about the metrics
+    # Bronze requires:  Having a License and Readme.
+    # FixMe - may be >1 score if user has gone back and forth in the UI
+    # prolly best to stop that happening in the first place
+
+    # License
+    # FixMe - implement get_score
+    license_scores = Score.query.filter_by(software_id=software_id, short_description="Has a license file?")
+    license_score = license_scores.first().value
+    app.logger.info("License Score: " + str(license_score))
+    if license_score < 50:
+        return False
+
+    # ReadMe
+    readme_scores = Score.query.filter_by(software_id=software_id, short_description="Has a README file?")
+    readme_score = readme_scores.first().value
+    app.logger.info("README Score: " + str(readme_score))
+    if readme_score != 100:
+        return False
+
+    return True
+
+
+def has_silver_award(software_id):
+    """
+    Ascertain if the piece of software had passed metrics to achieve a silver award
+    :param software_id:
+    :return: True if passed, otherwise false
+    """
+    # FixMe - this is not elegant and depends on lots of assumed knowledge about the metrics
+    # Silver requires:  Having a License and Readme.
+    # FixMe - may be >1 score if user has gone back and forth in the UI
+    # prolly best to stop that happening in the first place
+
+    # Vitality
+    vitality_scores = Score.query.filter_by(software_id=software_id, short_description="Calculate committer trend")
+    vitality_score = vitality_scores.first().value
+    app.logger.info("Vitality Score: " + str(vitality_score))
+    if vitality_score < 50:
+        return False
+
+    return True
 
 
 def run_interactive_metrics(form_data, all_metrics, sw):
