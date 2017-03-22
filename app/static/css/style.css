@@ -1,3 +1,8 @@
+.assessment-categories {
+    font-size: 1.2em;
+    margin: 15px 0px 15px 0px;
+    padding: 0px 0px 10px 0px;
+}
 .assessment-category {
     font-weight: bold;
 }
@@ -27,6 +32,10 @@
     border-left: 2px solid;
     height: 10px;
     margin-bottom: 10px;
+}
+
+.footer-page {
+    margin: 50px 0px 20px 0px;
 }
 
 /** Prevent range controls taking up the whole line breaking labels **/
@@ -91,10 +100,7 @@ h1.award-level {
     font-size: 4.0em;
 }
 
-ul {
-    list-style-type: none;
-    padding-left: 0px;
-}
+
 
 ul li label {
     display: inline;
