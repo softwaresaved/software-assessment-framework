@@ -13,10 +13,23 @@ import plugins.metric
 
 # Routes and views
 
-# Software Submission
+# Index page
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index')
 def index():
+    return render_template('index.html')
+
+
+# Browse page
+@app.route('/browse', methods=['GET', 'POST'])
+def browse():
+    sw_all = Software.query.group_by(Software.name, Software.version)
+    return render_template('browse.html', sw_all=sw_all)
+
+
+# Software Submission
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
     software_submit_form = SoftwareSubmitForm()
     failed = False
     # Is this a form submission?
@@ -40,7 +53,7 @@ def index():
 
         if failed:
             flash(fail_message)
-            return redirect(url_for('index'))
+            return redirect(url_for('submit'))
         else:
             # Create a new Software instance
             sw = Software(id=None,
@@ -57,7 +70,7 @@ def index():
             # Forward to interactive (self-assessment) metrics selection
             return redirect(url_for('metrics_interactive'))
 
-    return render_template('index.html', form=software_submit_form)
+    return render_template('submit.html', form=software_submit_form)
 
 
 # Interactive Metrics Selection

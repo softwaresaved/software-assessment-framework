@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% macro software_item(software) %}
+    <div>
+        {{ software.name }} {{ software.version }} -
+        <a href="{{ software.url }}">(Repository)</a>
+        <a href="/metrics/awards/{{ software.id }}">(Awards)</a>
+        <a href="/metrics/scores/{{ software.id }}">(Detailed Scores)</a>
+    </div>
+{% endmacro %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h2>Assessed Software</h2>
+    </div>
+
+    <h4 class="preamble">The following items of software have been assessed.</h4>
+
+    <div>
+        {% for software in sw_all %}
+            {{ software_item(software) }}
+        {% endfor %}
+    </div>
+
+{% endblock %}

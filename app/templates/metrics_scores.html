@@ -24,12 +24,14 @@
 {% block page_content %}
     <div class="page-header">
         <h2>Metrics Scores</h2>
-        <h3>{{ software.name }}</h3>
+        <h3>{{ software.name }} {{ software.version }}</h3>
     </div>
 
     {% for cat_name, cat_scores in scores.items() %}
         {{ render_category(cat_name, cat_scores) }}
     {% endfor %}
 
-
+    <div>
+        See what level of <a href="/metrics/awards/{{ software.id }}">Award</a> this achieves
+    </div>
 {% endblock %}
