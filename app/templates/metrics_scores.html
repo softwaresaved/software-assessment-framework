@@ -42,7 +42,7 @@
         {{ render_category(cat_name, cat_scores) }}
     {% endfor %}
 
-    <div>
-        See what level of <a href="{{ url_for('metrics_awards', software_id=software.id) }}">Award</a> this achieves.
-    </div>
+    <h5>
+        See what level of <a href="{{ url_for('metrics_awards', software_id=software.id) }}" class="btn btn-default btn-xs" role="button">Award</a> this achieves.
+    </h5>
 {% endblock %}

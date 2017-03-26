@@ -8,7 +8,7 @@
 
     <h4 class="preamble">Based on our metrics and their relative importances as chosen by the submitter.</h4>
     <div>Assessed on: {{ assessment_date.strftime('%d-%m-%Y') }}</div>
-    <h1 class="award-level">{{ award }} Award</h1>
+    <h1 class="award-level"><span class="label label-default">{{ award }} Award</span></h1>
 
     <div class="container">
 
@@ -115,7 +115,7 @@
             </div>
         </div>
     </div>
-    <div>
-        See what level of <a href="{{ url_for("metrics_scores", software_id=software.id) }}">raw scores</a> behind this award.
-    </div>
+    <h5>
+        See the <a href="{{ url_for("metrics_scores", software_id=software.id) }}" class="btn btn-default btn-xs"Raw Scores</a> that make up this award.
+    </h5>
 {% endblock %}
