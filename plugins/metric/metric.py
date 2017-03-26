@@ -10,11 +10,27 @@ class Metric(yapsy.IPlugin.IPlugin):
     The presence of an identifiable license results in a score of 100.
     """
 
-    INTERACTIVE = None  # None / False - Non-interactive - Doesn't require user input beyond the repository URL
-                        # True - Interactive - Assessment is based solely on user input
-    CATEGORY = "UNSET"  # "AVAILABILITY", "USABILITY", "MAINTAINABILITY", "PORTABILITY"
-    SHORT_DESCRIPTION = "UNSET"  # A one or two sentence description of the metric.  If the metric is interactive, this will be presented to the user as the question
-    LONG_DESCRIPTION = "UNSET"  # Longer description of the metric, how it works and explanation of scoring
+    NAME = "UNSET"
+    # Short, descriptive, human readable name for this metric - e.g. "Vitality", "License", "Freshness"
+
+    IDENTIFIER = "uk.ac.software.saf.metric"
+    # A *meaningful* unique identifier for this metric.
+    # To avoid collisions, a reverse domain name style notation may be used, or your-nick.metric-name
+    # The final part should coincide with the module name
+
+    CATEGORY = "UNSET"
+    # "AVAILABILITY", "USABILITY", "MAINTAINABILITY", "PORTABILITY"
+
+    SHORT_DESCRIPTION = "UNSET"
+    # A one or two sentence description of the metric, to be displayed to the user
+    # If the metric is interactive, this will be presented to the user as the question
+
+    LONG_DESCRIPTION = "UNSET"
+    # Longer description of the metric, how it works and explanation of scoring
+
+    SELF_ASSESSMENT = None
+    # None / False - Non-interactive - Doesn't require user input beyond the repository URL
+    # True - Interactive - Assessment is based solely on user input
 
     def run(self, software, helper=None, form_data=None):
         """

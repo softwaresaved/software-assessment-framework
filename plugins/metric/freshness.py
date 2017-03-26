@@ -12,7 +12,9 @@ class FreshnessMetric(metric.Metric):
     100 if more than one commit found
     """
 
-    INTERACTIVE = False
+    NAME = "Development Activity"
+    IDENTIFIER = "uk.ac.software.saf.freshness"
+    SELF_ASSESSMENT = False
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Actively developed?"
     LONG_DESCRIPTION = "Calculate the freshness of a repository."

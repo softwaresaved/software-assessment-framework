@@ -3,20 +3,31 @@
 {% macro render_category(cat_name, cat_scores) %}
 
     {% if cat_scores.all()|length > 0 %}
-        <h3><label>{{ cat_name }}</label></h3>
-        <h5>Category Importance: {{ cat_scores.first().category_importance }}</h5>
-        <ul>
-            {% for score in cat_scores %}
-                <li>
-                    <div>
-                        <h4>{{ score.short_description }}</h4>
-                        <div>Score: {{ score.value }}</div>
-                        <div>Feedback: {{ score.feedback }}</div>
-                        <div>Metric Importance: {{ score.metric_importance }}</div>
-                    </div>
-                </li>
-            {%  endfor %}
-        </ul>
+        <div class="panel panel-info">
+            <div class="panel-heading ">
+                <div class="panel-title"><strong>{{ cat_name }}</strong></div>
+            </div>
+            <div class="panel-body">
+                <small>(Indicated category Importance: {{ cat_scores.first().category_importance }})</small>
+                <ul>
+                    {% for score in cat_scores %}
+                        <li>
+                            <div>
+                                <h4>{{ score.short_description }}  <div class="label
+                                {% if score.value == 100 %}label-success
+                                {% elif score.value == 0 %}label-danger
+                                {% else %}label-warning{%  endif %}
+                                ">Score: {{ score.value }}</div></h4>
+                                <div>
+                                    <strong>Feedback:</strong> {{ score.feedback }}
+                                    <small>(Indicated metric Importance: {{ score.metric_importance }})</small>
+                                </div>
+                            </div>
+                        </li>
+                    {%  endfor %}
+                </ul>
+            </div>
+        </div>
     {% endif %}
 
 {% endmacro %}
@@ -32,6 +43,6 @@
     {% endfor %}
 
     <div>
-        See what level of <a href="/metrics/awards/{{ software.id }}">Award</a> this achieves
+        See what level of <a href="{{ url_for('metrics_awards', software_id=software.id) }}">Award</a> this achieves.
     </div>
 {% endblock %}

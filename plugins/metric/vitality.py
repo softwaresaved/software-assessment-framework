@@ -14,8 +14,9 @@ class VitalityMetric(metric.Metric):
 
     This should be replaced by a score which reflects the actual trends we see.
     """
-
-    INTERACTIVE = False
+    NAME = "Vitality"
+    IDENTIFIER = "uk.ac.software.saf.vitality"
+    SELF_ASSESSMENT = False
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Calculate committer trend"
     LONG_DESCRIPTION = "Calculate the vitality of a repository."

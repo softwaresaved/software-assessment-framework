@@ -11,8 +11,9 @@ class ReadmeMetric(metric.Metric):
     100 if README file with non-zero length contents is found
     """
 
-    # FixMe - implement IDENTIFIER = "uk.ac.software.saf.readme"
-    INTERACTIVE = False
+    NAME = "README"
+    IDENTIFIER = "uk.ac.software.saf.readme"
+    SELF_ASSESSMENT = False
     CATEGORY = "USABILITY"
     SHORT_DESCRIPTION = "Has a README file?"
     LONG_DESCRIPTION = "Test for the existence of file 'README'."

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% macro software_item(software) %}
-    <div>
+    <li>
         {{ software.name }} {{ software.version }} -
         <a href="{{ software.url }}">(Repository)</a>
-        <a href="/metrics/awards/{{ software.id }}">(Awards)</a>
-        <a href="/metrics/scores/{{ software.id }}">(Detailed Scores)</a>
-    </div>
+        <a href="{{ url_for("metrics_awards", software_id=software.id) }}">(Awards)</a>
+        <a href="{{ url_for("metrics_scores", software_id=software.id) }}">(Detailed Scores)</a>
+    </li>
 {% endmacro %}
 
 {% block page_content %}
@@ -14,12 +14,14 @@
         <h2>Assessed Software</h2>
     </div>
 
-    <h4 class="preamble">The following items of software have been assessed.</h4>
+    <h4 class="preamble">The following software has been assessed.</h4>
 
     <div>
+        <ul>
         {% for software in sw_all %}
             {{ software_item(software) }}
         {% endfor %}
+        </ul>
     </div>
 
 {% endblock %}

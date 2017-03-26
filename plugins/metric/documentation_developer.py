@@ -12,7 +12,9 @@ class DocumentationDeveloperMetric(metric.Metric):
     100 if "Comprehensive documentation"
     """
 
-    INTERACTIVE = True
+    NAME = "Developer Documentation"
+    IDENTIFIER = "uk.ac.software.saf.documentation_developer"
+    SELF_ASSESSMENT = True
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Developer Documentation?"
     LONG_DESCRIPTION = "Do you provide documentation for developers wanting to contribute to, extend or fix bugs in your project?"

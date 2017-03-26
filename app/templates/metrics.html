@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% macro metric_block(meta) %}
+    <div class="panel panel-info">
+        <div class="panel-heading ">
+            <div class="panel-title"><strong>{{ meta['category_name'] }}</strong></div>
+        </div>
+        <div class="panel-body">
+            <h5>{{ meta['category_description'] }}</h5>
+            <hr/>
+            <ul>
+            {% for metric in meta['metrics'] %}
+                <li>
+                    <a href={{ url_for("show_metric", metric_identifier=metric.IDENTIFIER) }}>{{ metric.NAME }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+{% endmacro %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h2>Metrics</h2>
+    </div>
+
+    <h4 class="preamble">The following metrics are available</h4>
+
+    <div>
+        {% for meta in [a_meta, u_meta, m_meta, p_meta] %}
+            {{ metric_block(meta) }}
+
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -12,9 +12,11 @@ class DocumentationUserMetric(metric.Metric):
     100 if "Comprehensive documentation"
     """
 
-    INTERACTIVE = True
+    NAME = "End-user Documentation"
+    IDENTIFIER = "uk.ac.software.saf.documentation_user"
+    SELF_ASSESSMENT = True
     CATEGORY = "USABILITY"
-    SHORT_DESCRIPTION = "End user documentation"
+    SHORT_DESCRIPTION = "End user documentation?"
     LONG_DESCRIPTION = "Do you provide end-user documentation?  If so, how extensive is it?"
 
     def run(self, software, helper=None, form_data=None):

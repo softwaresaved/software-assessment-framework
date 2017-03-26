@@ -12,8 +12,9 @@ class LicenseMetric(metric.Metric):
     50 if a license file is present but not idenitfiable
     100 if an identifiable license if found
     """
-
-    INTERACTIVE = False
+    NAME = "Licensing"
+    IDENTIFIER = "uk.ac.software.saf.license"
+    SELF_ASSESSMENT = False
     CATEGORY = "MAINTAINABILITY"
     SHORT_DESCRIPTION = "Has a license file?"
     LONG_DESCRIPTION = "Test for the existence of file called 'LICENSE' and attempt to identify it from its contents."

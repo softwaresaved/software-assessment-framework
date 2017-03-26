@@ -13,23 +13,99 @@ import plugins.metric
 
 # Routes and views
 
-# Index page
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index')
 def index():
+    """
+    Index Page
+    :return: 
+    """
     return render_template('index.html')
 
 
-# Browse page
-@app.route('/browse', methods=['GET', 'POST'])
-def browse():
+@app.route('/software', methods=['GET'])
+def browse_software():
+    """
+    Browse Software Submissions
+    :return: 
+    """
     sw_all = Software.query.group_by(Software.name, Software.version)
-    return render_template('browse.html', sw_all=sw_all)
+    return render_template('software.html', sw_all=sw_all)
 
 
-# Software Submission
+@app.route('/metrics', methods=['GET'])
+def browse_metrics():
+    """
+    List Metrics
+    :return: 
+    """
+    all_metrics = plugins.metric.load()
+
+    # Todo - move this all out to a separate module. Define metric categories and descriptions, loading and filtering
+
+    metrics_availabilty = []
+    metrics_usability = []
+    metrics_maintainability = []
+    metrics_portability = []
+    for metric in all_metrics:
+        if metric.CATEGORY == "AVAILABILITY":
+            metrics_availabilty.append(metric)
+        if metric.CATEGORY == "USABILITY":
+            metrics_usability.append(metric)
+        if metric.CATEGORY == "MAINTAINABILITY":
+            metrics_maintainability.append(metric)
+        if metric.CATEGORY == "PORTABILITY":
+            metrics_portability.append(metric)
+
+    a_meta = {"category_name": "Availability",
+              "category_description": "Can a user find the software (discovery) and can they obtain the software (access)?",
+              "metrics": metrics_availabilty}
+
+    u_meta = {"category_name": "Usability",
+              "category_description": "Can a user understand the operation of the software, such they can use it, integrate it with other software and extend or modify it?",
+              "metrics": metrics_usability}
+
+    m_meta = {"category_name": "Maintainability",
+              "category_description": "What is the likelihoood that the software can be maintained and developed over a period of time?",
+              "metrics": metrics_maintainability}
+
+    p_meta = {"category_name": "Portability",
+              "category_description": "What is the capacity for using the software in a different area, field or environment?",
+              "metrics": metrics_portability}
+
+    return render_template('metrics.html',
+                           a_meta=a_meta,
+                           u_meta=u_meta,
+                           m_meta=m_meta,
+                           p_meta=p_meta)
+
+
+@app.route('/metrics/<metric_identifier>', methods=['GET'])
+def show_metric(metric_identifier):
+    """
+    Display a single metric
+    :param metric_identifier: 
+    :return: 
+    """
+    the_metric = None
+    metrics_all = plugins.metric.load()
+    for m in metrics_all:
+        if m.IDENTIFIER == metric_identifier:
+            the_metric = m
+
+    if the_metric is None:
+        # We don't recognise that id
+        abort(404)
+
+    return render_template('metric.html', metric=the_metric)
+
+
 @app.route('/submit', methods=['GET', 'POST'])
-def submit():
+def submit_software():
+    """
+    Submire software for assessment
+    :return: 
+    """
     software_submit_form = SoftwareSubmitForm()
     failed = False
     # Is this a form submission?
@@ -73,9 +149,12 @@ def submit():
     return render_template('submit.html', form=software_submit_form)
 
 
-# Interactive Metrics Selection
-@app.route('/metrics/select/interactive', methods=['GET', 'POST'])
+@app.route('/submit/interactive', methods=['GET', 'POST'])
 def metrics_interactive():
+    """
+    Interactive Metrics Selection
+    :return: 
+    """
     # Load the software from the id stored in the session
     # NB - We use the software_id from the session, rather than from the request,
     # this prevents users other than the submitter changing the metrics to be run
@@ -83,7 +162,7 @@ def metrics_interactive():
     # Load interactive metrics
     app.logger.info("Finding Interactive metrics")
     # FixMe - implement a category based filter for plugin loading to avoid repetition below
-    metrics = plugins.metric.load()
+    all_metrics = plugins.metric.load()
 
     # In order to be able to separate, and label the categories, we need to create *individual* sub-form classes
     # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it.
@@ -102,28 +181,27 @@ def metrics_interactive():
 
     # Add metrics to their appropriate sub-forms classes (not instances)
     # FixMe - Because the choices come from a dictionary, the sort order is random
-    for metric in metrics:
-        if metric.INTERACTIVE:
-            metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
+    for metric in all_metrics:
+        if metric.SELF_ASSESSMENT:
             if metric.CATEGORY == "AVAILABILITY":
-                setattr(InteractiveMetricAvailabilityForm, metric_key,
+                setattr(InteractiveMetricAvailabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
-                setattr(InteractiveMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
+                setattr(InteractiveMetricAvailabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "USABILITY":
-                setattr(InteractiveMetricUsabilityForm, metric_key,
+                setattr(InteractiveMetricUsabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
-                setattr(InteractiveMetricUsabilityForm, "IMPORTANCE_"+metric_key,
+                setattr(InteractiveMetricUsabilityForm, "IMPORTANCE_"+metric.IDENTIFIER,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "MAINTAINABILITY":
-                setattr(InteractiveMetricMaintainabilityForm, metric_key,
+                setattr(InteractiveMetricMaintainabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
-                setattr(InteractiveMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
+                setattr(InteractiveMetricMaintainabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
             if metric.CATEGORY == "PORTABILITY":
-                setattr(InteractiveMetricPortabilityForm, metric_key,
+                setattr(InteractiveMetricPortabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
-                setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric_key,
+                setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                         IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
     # Build the top-level form with the instances of the now populated sub-form classes.
@@ -140,10 +218,10 @@ def metrics_interactive():
     # Deal with submission
     if interactive_metric_run_form.validate_on_submit():
         # Run the metrics
-        run_interactive_metrics(interactive_metric_run_form.ff_u.data, metrics, sw)
-        run_interactive_metrics(interactive_metric_run_form.ff_a.data, metrics, sw)
-        run_interactive_metrics(interactive_metric_run_form.ff_m.data, metrics, sw)
-        run_interactive_metrics(interactive_metric_run_form.ff_p.data, metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_u.data, all_metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_a.data, all_metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_m.data, all_metrics, sw)
+        run_interactive_metrics(interactive_metric_run_form.ff_p.data, all_metrics, sw)
         # Forward to automater metrics
         return redirect(url_for('metrics_automated'))
 
@@ -157,9 +235,12 @@ def metrics_interactive():
                            software=sw)
 
 
-# Automated Metrics Selection and Execution
-@app.route('/metrics/select/automated', methods=['GET', 'POST'])
+@app.route('/submit/automated', methods=['GET', 'POST'])
 def metrics_automated():
+    """
+    Automated Metrics Selection and Execution
+    :return: 
+    """
     # Load the software from the id stored in the session
     # NB - We use the software_id from the session, rather than from the request,
     # this prevents users other than the submitter changing the metrics to be run
@@ -186,31 +267,30 @@ def metrics_automated():
     # Add metrics to their appropriate sub-forms classes (not instances)
     # FixMe - Because the choices come from a dictionary, the sort order is random
     for metric in metrics:
-        if metric.INTERACTIVE:
+        if metric.SELF_ASSESSMENT:
             continue
-        metric_key = hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest()
         if metric.CATEGORY == "AVAILABILITY":
-            setattr(AutoMetricAvailabilityForm, metric_key,
+            setattr(AutoMetricAvailabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
-            setattr(AutoMetricAvailabilityForm, "IMPORTANCE_" + metric_key,
+            setattr(AutoMetricAvailabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "USABILITY":
-            setattr(AutoMetricUsabilityForm, metric_key,
+            setattr(AutoMetricUsabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
-            setattr(AutoMetricUsabilityForm, "IMPORTANCE_" + metric_key,
+            setattr(AutoMetricUsabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "MAINTAINABILITY":
-            setattr(AutoMetricMaintainabilityForm, metric_key,
+            setattr(AutoMetricMaintainabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
-            setattr(AutoMetricMaintainabilityForm, "IMPORTANCE_" + metric_key,
+            setattr(AutoMetricMaintainabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "PORTABILITY":
-            setattr(AutoMetricPortabilityForm, metric_key,
+            setattr(AutoMetricPortabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
-            setattr(AutoMetricPortabilityForm, "IMPORTANCE_" + metric_key,
+            setattr(AutoMetricPortabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
                     IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
 
         # Build the top-level form with the instances of the now populated sub-form classes.
@@ -252,9 +332,13 @@ def metrics_automated():
                            software=sw)
 
 
-# Metrics scores (raw scores - post submission)
-@app.route('/metrics/scores/<software_id>', methods=['GET'])
+@app.route('/scores/<software_id>', methods=['GET'])
 def metrics_scores(software_id):
+    """
+    Metrics scores (raw scores - post submission)
+    :param software_id: 
+    :return: 
+    """
     # Load the Software
     sw = Software.query.filter_by(id=software_id).first()
 
@@ -271,8 +355,13 @@ def metrics_scores(software_id):
                            )
 
 
-@app.route('/metrics/awards/<software_id>', methods=['GET'])
+@app.route('/awards/<software_id>', methods=['GET'])
 def metrics_awards(software_id):
+    """
+    Calculate the awards, based on the scores
+    :param software_id: 
+    :return: 
+    """
     # Load the Software
     sw = Software.query.filter_by(id=software_id).first()
 
@@ -362,14 +451,21 @@ def run_interactive_metrics(form_data, all_metrics, sw):
         if metric_id == "submit" or metric_id == "csrf_token":
             continue
         for metric in all_metrics:
-            if hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest() == metric_id:
+            if metric.IDENTIFIER == metric_id:
                 app.logger.info("Running metric: " + metric.SHORT_DESCRIPTION)
                 metric.run(software=sw, form_data=value)
                 app.logger.info(metric.get_score())
                 app.logger.info(metric.get_feedback())
-                score = Score(software_id=sw.id, interactive=True, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
-                              long_description=metric.LONG_DESCRIPTION, value=metric.get_score(),
-                              feedback=metric.get_feedback(), category_importance=form_data['importance'],
+                score = Score(software_id=sw.id,
+                              name=metric.NAME,
+                              identifier=metric.IDENTIFIER,
+                              category=metric.CATEGORY,
+                              short_description=metric.SHORT_DESCRIPTION,
+                              long_description=metric.LONG_DESCRIPTION,
+                              interactive=metric.SELF_ASSESSMENT,
+                              value=metric.get_score(),
+                              feedback=metric.get_feedback(),
+                              category_importance=form_data['importance'],
                               metric_importance=form_data['IMPORTANCE_'+metric_id])
                 db.session.add(score)
                 db.session.commit()
@@ -390,14 +486,22 @@ def run_automated_metrics(form_data, metrics, sw, repos_helper):
     score_ids = []
     for metric_id in form_data:
         for metric in metrics:
-            if hashlib.md5(metric.SHORT_DESCRIPTION.encode('utf-8')).hexdigest() == metric_id:
+            if metric.IDENTIFIER == metric_id:
                 app.logger.info("Running metric: " + metric.SHORT_DESCRIPTION)
                 metric.run(software=sw, helper=repos_helper)
                 app.logger.info(metric.get_score())
                 app.logger.info(metric.get_feedback())
-                score = Score(software_id=sw.id, interactive=False, category=metric.CATEGORY, short_description=metric.SHORT_DESCRIPTION,
-                              long_description=metric.LONG_DESCRIPTION, value=metric.get_score(),
-                              feedback=metric.get_feedback())
+                score = Score(software_id=sw.id,
+                              name=metric.NAME,
+                              identifier=metric.IDENTIFIER,
+                              category=metric.CATEGORY,
+                              short_description=metric.SHORT_DESCRIPTION,
+                              long_description=metric.LONG_DESCRIPTION,
+                              interactive=metric.SELF_ASSESSMENT,
+                              value=metric.get_score(),
+                              feedback=metric.get_feedback(),
+                              category_importance=form_data['importance'],
+                              metric_importance=form_data['IMPORTANCE_' + metric_id])
                 db.session.add(score)
                 db.session.commit()
                 score_ids.append(score.id)

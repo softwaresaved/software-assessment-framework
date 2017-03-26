@@ -13,6 +13,8 @@ class ContributingMetric(metric.Metric):
     """
     # TODO: decide which category this metric should fall into
 
+    NAME = "Contribution Policy"
+    IDENTIFIER = "uk.ac.software.saf.contributing"
     CATEGORY = "USABILITY"
     SHORT_DESCRIPTION = "Has a CONTRIBUTING file?"
     LONG_DESCRIPTION = "Test for the existence of CONTRIBUTING file."

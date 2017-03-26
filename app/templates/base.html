@@ -22,8 +22,9 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a> </li>
-                <li><a href="/browse">Browse</a> </li>
-                <li><a href="/submit">Submit</a> </li>
+                <li><a href="{{ url_for("submit_software") }}">Submit</a> </li>
+                <li><a href="{{ url_for("browse_software") }}">Software</a> </li>
+                <li><a href="{{ url_for("browse_metrics") }}">Metrics</a> </li>
             </ul>
         </div>
     </div>

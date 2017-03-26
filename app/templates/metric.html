@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+    <div class="page-header">
+        <h2>Metric</h2>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading"><strong>{{ metric.NAME }}</strong></div>
+        <div class="panel-body">{{ metric.LONG_DESCRIPTION }}</div>
+        <table class="table">
+            <tr>
+                <td><strong>Category</strong>: {{ metric.CATEGORY }}</td>
+                <td><strong>Self Assessment</strong>: {% if metric.SELF_ASSESSMENT %} Yes {% else %} No {% endif %}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Short Description</strong>: {{ metric.SHORT_DESCRIPTION }}</td>
+            </tr>
+        </table>
+
+    </div>
+
+{% endblock %}
