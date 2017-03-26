@@ -13,4 +13,5 @@ class SoftwareSubmitForm(FlaskForm):
     description = TextAreaField('Description', render_kw={"rows": 10})
     version = StringField('Version')
     url = StringField('Repository URL', validators=[DataRequired()])
+    api_token = StringField('API Token (private repositories only)')
     submit = SubmitField('Submit')

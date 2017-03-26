@@ -14,6 +14,7 @@ class GitHubHelper(RepositoryHelper):
         self.repo_name = None
         self.github = None # GitHub Object from github3.py
         self.repo = None
+        self.api_token = config.github_api_token
 
     def can_process(self, url):
         if "github.com" in url:
@@ -28,7 +29,7 @@ class GitHubHelper(RepositoryHelper):
         try:
             # Try connecting with the supplied API token
             # ToDo: Check what actual happens when wrong credentials supplied - I suspect nothing
-            self.github = GitHub(token=config.github_api_token)
+            self.github = GitHub(token=self.api_token)
         except:
             logging.warning('Login to GitHub failed')
 
@@ -62,7 +63,7 @@ class GitHubHelper(RepositoryHelper):
             logging.info("...Success")
         else:
             logging.warning("Unable to connect to selected GitHub repository - check the URL and permissions")
-            raise RepositoryHelperRepoError("Unable to connect to selected GitHub repository - check the URL and permissions")
+            raise RepositoryHelperRepoError("Unable to connect to selected GitHub repository - check the URL and permissions. Supply an API token if the repository is private.")
 
     def get_files_from_root(self, candidate_filenames):
         """

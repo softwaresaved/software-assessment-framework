@@ -103,7 +103,7 @@ def show_metric(metric_identifier):
 @app.route('/submit', methods=['GET', 'POST'])
 def submit_software():
     """
-    Submire software for assessment
+    Submit software for assessment
     :return: 
     """
     software_submit_form = SoftwareSubmitForm()
@@ -121,15 +121,18 @@ def submit_software():
         else:
             # try to login
             try:
+                if software_submit_form.api_token.data != "":
+                    session['api_token'] = software_submit_form.api_token.data
+                    repos_helper.api_token = software_submit_form.api_token.data
                 repos_helper.login()
             except RepositoryHelperError as err:
                 failed = True
                 fail_message = err.message
-                app.logger.error("Unable to log in to the repository, check URL and permissions?")
+                app.logger.error("Unable to log in to the repository, check URL and permissions. Supply an API token if private.")
 
         if failed:
             flash(fail_message)
-            return redirect(url_for('submit'))
+            return redirect(url_for('submit_software'))
         else:
             # Create a new Software instance
             sw = Software(id=None,
@@ -141,7 +144,7 @@ def submit_software():
             # Persist it
             db.session.add(sw)
             db.session.commit()
-            # Add to session
+            # Add software_id to Flask session
             session['sw_id'] = sw.id
             # Forward to interactive (self-assessment) metrics selection
             return redirect(url_for('metrics_interactive'))
@@ -149,10 +152,10 @@ def submit_software():
     return render_template('submit.html', form=software_submit_form)
 
 
-@app.route('/submit/interactive', methods=['GET', 'POST'])
+@app.route('/submit/self_assessment', methods=['GET', 'POST'])
 def metrics_interactive():
     """
-    Interactive Metrics Selection
+    Self-Assessment Metrics Selection
     :return: 
     """
     # Load the software from the id stored in the session
@@ -160,7 +163,7 @@ def metrics_interactive():
     # this prevents users other than the submitter changing the metrics to be run
     sw = Software.query.filter_by(id=session['sw_id']).first()
     # Load interactive metrics
-    app.logger.info("Finding Interactive metrics")
+    app.logger.info("Finding Self-Assessment metrics")
     # FixMe - implement a category based filter for plugin loading to avoid repetition below
     all_metrics = plugins.metric.load()
 
@@ -313,6 +316,8 @@ def metrics_automated():
         # Load the RepositoryHelper again
         if sw.url and sw.url != "".strip():
             repos_helper = find_repository_helper(sw.url)
+            if 'api_token' in session:
+                repos_helper.api_token = session['api_token']
             repos_helper.login()
 
         # Run the appropriate metrics
