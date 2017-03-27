@@ -171,16 +171,16 @@ def metrics_interactive():
     # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it.
     # This feels *wrong* and *bad*, but it has to be done this way.
     class InteractiveMetricAvailabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     class InteractiveMetricUsabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     class InteractiveMetricMaintainabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     class InteractiveMetricPortabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     # Add metrics to their appropriate sub-forms classes (not instances)
     # FixMe - Because the choices come from a dictionary, the sort order is random
@@ -190,22 +190,22 @@ def metrics_interactive():
                 setattr(InteractiveMetricAvailabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricAvailabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                        IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
             if metric.CATEGORY == "USABILITY":
                 setattr(InteractiveMetricUsabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricUsabilityForm, "IMPORTANCE_"+metric.IDENTIFIER,
-                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                        IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
             if metric.CATEGORY == "MAINTAINABILITY":
                 setattr(InteractiveMetricMaintainabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricMaintainabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                        IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
             if metric.CATEGORY == "PORTABILITY":
                 setattr(InteractiveMetricPortabilityForm, metric.IDENTIFIER,
                         RadioField(label=metric.LONG_DESCRIPTION, choices=metric.get_ui_choices().items(), validators=[DataRequired()]))
                 setattr(InteractiveMetricPortabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                        IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                        IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
 
     # Build the top-level form with the instances of the now populated sub-form classes.
     class InteractiveMetricRunForm(FlaskForm):
@@ -256,16 +256,16 @@ def metrics_automated():
     # To dynamically add fields, we have to define the Form class at *runtime*, and instantiate it.
     # This feels *wrong* and *bad*, but it has to be done this way.
     class AutoMetricAvailabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     class AutoMetricUsabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     class AutoMetricMaintainabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     class AutoMetricPortabilityForm(FlaskForm):
-        importance = IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1})
+        importance = IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1})
 
     # Add metrics to their appropriate sub-forms classes (not instances)
     # FixMe - Because the choices come from a dictionary, the sort order is random
@@ -276,25 +276,25 @@ def metrics_automated():
             setattr(AutoMetricAvailabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricAvailabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                    IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "USABILITY":
             setattr(AutoMetricUsabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricUsabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                    IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "MAINTAINABILITY":
             setattr(AutoMetricMaintainabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricMaintainabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                    IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
 
         if metric.CATEGORY == "PORTABILITY":
             setattr(AutoMetricPortabilityForm, metric.IDENTIFIER,
                     BooleanField(label=metric.SHORT_DESCRIPTION))
             setattr(AutoMetricPortabilityForm, "IMPORTANCE_" + metric.IDENTIFIER,
-                    IntegerRangeField("Importance to you:", render_kw={"value": 0, "min": 0, "max": 1}))
+                    IntegerRangeField("Importance to you:", render_kw={"value": 1, "min": 0, "max": 1}))
 
         # Build the top-level form with the instances of the now populated sub-form classes.
         class AutomatedMetricRunForm(FlaskForm):
