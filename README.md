@@ -20,6 +20,10 @@ The top level assessment categories are:
   * Maintainability: what is the likelihood that the software can be maintained and developed over a period of time?
   * Portability: what is the capacity for using the software in a different area, field, or environment?
 
+## Contributing to this project
+
+Want to suggest a [metric](https://github.com/softwaresaved/software-assessment-framework/issues?q=is%3Aissue+label%3Ametric), report a [bug](https://github.com/softwaresaved/software-assessment-framework/issues?q=is%3Aopen+is%3Aissue+label%3Abug), or contribute your time and experience to the project? Please see our [Guidelines for Contributing](https://github.com/softwaresaved/software-assessment-framework/blob/master/CONTRIBUTING.md).
+
 ## Planning
 
 * Requirements
