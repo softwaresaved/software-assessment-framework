@@ -1,5 +1,13 @@
 # How to contribute
 
+## **Do you want to suggest a new metric?**
+
+* We'd love to hear what you think makes good metrics - we're taking suggestions through the GitHub issues system.
+
+* To suggest a new metric:
+  1. **Check the metric has not been suggested / implemented already** by searching on GitHub under [Issues with the label "metric"](https://github.com/softwaresaved/software-assessment-framework/issues?q=is%3Aissue+label%3Ametric)
+  2. If it's not there, open a [new issue] (https://github.com/softwaresaved/software-assessment-framework/issues/new). Be sure to include a **title and clear description of your metric**, with as much relevant information as possible, for instance what category of metric it is, links to background references / material, and a description of what the metric measures. Make sure you apply the **"Metric"** label to the issue.
+
 ## **Did you find a bug?**
 
 * **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/softwaresaved/software-assessment-framework/issues).
