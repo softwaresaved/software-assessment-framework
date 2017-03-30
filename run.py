@@ -14,7 +14,7 @@ def main():
 
     app.config['WTF_CSRF_ENABLED'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-    app.run(debug=True)
+    app.run(host=config.host, port=config.port, debug=True)
 
 if __name__ == '__main__':
     main()
