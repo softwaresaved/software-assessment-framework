@@ -27,6 +27,7 @@ class LicenseMetric(metric.Metric):
         :return:
         """
         self.score = 0
+        self.feedback = "A license helps people to know what terms they are bound by, if any, when using and/or updating your software."
         candidate_files = helper.get_files_from_root(['LICENSE', 'LICENSE.txt', 'LICENSE.md', 'LICENSE.html','LICENCE', 'LICENCE.txt', 'LICENCE.md', 'LICENCE.html'])
         for file_name, file_contents in candidate_files.items():
             # Identify license
