@@ -3,6 +3,9 @@ import logging
 
 ## General properties
 
+host = '0.0.0.0'
+port = 5000
+
 # logging.DEBUG > logging.INFO > logging.WARNING > logging.ERROR > logging.CRITICAL
 log_level = logging.DEBUG
 log_file_name = "saf.log"
