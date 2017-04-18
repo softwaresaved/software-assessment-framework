@@ -5,6 +5,7 @@ Flask-Bootstrap==3.3.7.1
 Flask-SQLAlchemy==2.1
 Flask-WTF==0.14.2
 github3.py==0.9.6
+pybitbucket==0.12.0
 itsdangerous==0.24
 Jinja2==2.9.5
 MarkupSafe==0.23
