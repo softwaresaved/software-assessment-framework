@@ -27,7 +27,26 @@ Use of a Python Virtual Environment [venv](https://docs.python.org/3/library/ven
 The installation instructions for MacOS are the same as those for Ubuntu Linux.
 
 ### Windows
-TBC
+1. Install python3.6, anaconda and git-bash - ensure path environment variables are installed during anaconda installation.
+
+2. setup and activate the virtual environment
+
+`$ virtualenv venv`
+
+`$ source venv/Scripts/activate`
+
+3. clone the SAF GitHub repository
+
+`$ git clone https://github.com/UserName/software-assessment-framework.git`
+
+4. install the prerequisite python packages as described in requirement.txt
+
+`$ cd software-assessment-framework`
+
+`$ pip install -r requirements.txt`
+
+
+ 
 
 ### Using conda instead of venv
 
